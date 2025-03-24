@@ -1,0 +1,48 @@
+server:
+  port: 8081
+
+datasource:
+  # Mysql连接配置
+  mysql:
+    url: jdbc:mysql://127.0.0.1:3306/pudding_datasource?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+
+# druid连接池配置
+druid:
+  # 登录配置
+  login:
+    # 账号
+    username: druid
+    # 密码
+    password: 123456
+    # 访问白名单
+    whitelist: 127.0.0.1
+    # 访问黑名单
+    blacklist: 192.168.0.100
+    # 访问路径
+    url-pattern: /druid/*
+
+# redis配置
+redis:
+  # 连接url
+  host: localhost
+  # 端口号
+  port: 6379
+  # 密码
+  password: 123456
+  # 使用分片
+  database: 0
+
+# log日志配置
+logging:
+  level:
+    # 根日志级别
+    root: INFO
+    # spring 日志级别
+    spring: DEBUG
+    # 业务日志级别
+    pudding: DEBUG
+  file:
+    # 文件输出路径
+    path: ./logs

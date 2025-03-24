@@ -18,6 +18,7 @@
         <module>client</module>
         <module>config</module>
         <module>job</module>
+        <module>bootstrap</module>
     </modules>
 
     <properties>
@@ -40,7 +41,6 @@
         <!-- swagger -->
         <springfox.version>3.0.0</springfox.version>
         <knife4j.version>3.0.3</knife4j.version>
-
 
         <!-- 项目版本 -->
         <pudding.version>1.0-SNAPSHOT</pudding.version>
@@ -132,6 +132,19 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Spring Boot logging -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+
+        <!-- Spring Boot validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
 
     </dependencies>
 

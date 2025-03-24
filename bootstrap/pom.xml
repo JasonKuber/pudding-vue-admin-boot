@@ -9,11 +9,11 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>api</artifactId>
+    <artifactId>bootstrap</artifactId>
+    <description>启动模块</description>
     <packaging>pom</packaging>
-    <description>对外暴露的HTTP接口（Controller）、Feign Client接口、DTO</description>
     <modules>
-        <module>api-admin</module>
+        <module>bootstrap-admin</module>
     </modules>
 
     <properties>

@@ -1,0 +1,213 @@
+server:
+  # 服务端口号
+  port: ${server.port}
+  servlet:
+    # 项目访问路径
+    context-path: /
+  tomcat:
+    native: false
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # 连接数满后的排队数，默认为100
+    accept-count: 100
+    threads:
+      # tomcat最大线程数，默认为200
+      max: 200
+      # Tomcat启动初始化的线程数，默认值10
+      min-spare: 10
+
+
+spring:
+  mvc:
+    pathmatch:
+      # SpringBoot 2.6之后想用Swagger2就必须配置该项
+      matching-strategy: ant_path_matcher
+  application:
+    name: Pudding-Vue-Admin
+  profiles:
+    # 指定环境
+    active: dev
+  output:
+    ansi:
+      # 控制日志显示颜色
+      enabled: always
+  # 数据库配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${datasource.mysql.url}
+    username: ${datasource.mysql.username}
+    password: ${datasource.mysql.password}
+    # Druid配置
+    druid:
+      # 初始化连接池大小
+      initial-size: 5
+      # 连接池最小空闲数
+      min-idle: 5
+      # 连接池最大连接数
+      max-active: 20
+      # 连接时最大等待时间（单位：毫秒）
+      max-wait: 60000
+      # 检测关闭空闲连接的时间间隔（单位：毫秒）
+      time-between-eviction-runs-millis: 60000
+      # 保持空闲连接不被关闭的最小生存时间（单位：毫秒）
+      min-evictable-idle-time-millis: 300000
+      # 检测连接有效的SQL
+      # 为空则test-while-idle、test-on-borrow、test-on-return配置失效
+      validation-query: SELECT 1
+      # 检测连接是否有效的超时时间
+      validation-query-timeout: 1
+      # 检测空闲连接
+      # 不影响性能，建议开启
+      test-while-idle: true
+      # 检测获取连接时的有效性
+      # 开启后会影响性能
+      test-on-borrow: false
+      # 检测归还连接时的有效性
+      # 开启后会影响性能
+      test-on-return: false
+      # 是否开启PSCache，即是否缓存preparedStatement（提升写入、查询效率）
+      # 建议在支持游标的数据库开启，例如：Oracle
+      pool-prepared-statements: false
+      # 每个连接上PSCache的最大值
+      # 如果大于0，pool-prepared-statements自动开启
+      max-pool-prepared-statement-per-connection-size: -1
+      # 配置默认的监控统计拦截的Filter
+      # 不配置则监控页面中的SQL无法统计
+      # stat - SQL监控配置
+      # wall - SQL防火墙配置
+      # slf4j - Druid日志配置
+      filters: stat,wall,slf4j
+      # 配置过滤器
+      filter:
+        # SQL监控配置
+        stat:
+          enabled: true
+          db-type: mysql
+          # 是否开启慢SQL统计
+          log-slow-sql: true
+          # 慢SQL时间
+          slow-sql-millis: 10000
+          # 慢SQL日志级别
+          slow-sql-log-level: ERROR
+          # 是否开启合并SQL
+          # 开启后，select * from table where id = 1 和 select * from table where id = 2 将合并为 select * from table where id = ?
+          merge-sql: true
+        # SQL防火墙配置
+        wall:
+          enabled: true
+          db-type: mysql
+          config:
+            # 允许新增
+            insert-allow: true
+            # 允许更新
+            update-allow: true
+            # 禁止更新时无条件
+            update-where-none-check: true
+            # 允许删除
+            delete-allow: true
+            # 禁止删除时无条件
+            delete-where-none-check: true
+            # 禁止对表ALTER
+            alter-table-allow: false
+            # 禁止对表DROP
+            drop-table-allow: false
+            # 允许多语句操作
+            multi-statement-allow: true
+        # Druid日志配置
+        slf4j:
+          enabled: true
+          # 关闭数据源日志
+          data-source-log-enabled: false
+          # 关闭连接日志
+          connection-log-enabled: false
+          # 开启执行SQL日志
+          statement-executable-sql-log-enable: true
+          # 开启结果映射日志
+          result-set-log-enabled: true
+      # 配置统计页面
+      stat-view-servlet:
+        enabled: true
+        # 允许重置监控数据
+        reset-enable: true
+        # 访问白名单
+        allow: ${druid.login.whitelist}
+        # 访问黑名单
+        deny: ${druid.login.blacklist}
+        # 访问用户名
+        login-username: ${druid.login.username}
+        # 访问密码
+        login-password: ${druid.login.password}
+        # 访问路径
+        url-pattern: ${druid.login.url-pattern}
+      # 配置统计页面过滤
+      web-stat-filter:
+        enabled: true
+        # 过滤路径
+        url-pattern: /*
+        # 排除路径
+        exclusions: .js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*
+        # 开启session统计
+        session-stat-enable: true
+        # session统计的最大个数
+        session-stat-max-count: 100
+
+  # redis配置
+  redis:
+    # 链接地址
+    host: ${redis.host}
+    # 端口号
+    port: ${redis.port}
+    # 密码
+    password: ${redis.password}
+    # Redis默认情况下有16个分片，这里配置具体使用的分片，默认是0
+    database: ${redis.database}
+    # #连接超时时间（毫秒）
+    timeout: 10000ms
+    # lettuce连接池
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 8
+        #连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1ms
+        # #连接池中的最大空闲连接
+        max-idle: 5
+        #连接池中的最小空闲连接
+        min-idle: 0
+
+
+
+
+# mybatisPlus配置
+mybatis-plus:
+  # Mapper.xml位置 多个目录用逗号或分号分割线
+  mapper-locations: classpath:mapper/*.xml
+  # Mybatis 别名包扫描路径，通过该属性可以给包中的类注册别名，多个路径用逗号分隔
+  type-aliases-package: com.pudding.infrastructure.entity
+  global-config:
+    db-config:
+      # 主键类型自增
+      id-type: auto
+      # 表前缀
+  #      table-prefix: t_
+    # MybatisPlus 启动banner
+    banner: false
+
+
+# 日志配置
+logging:
+  level:
+    # 设置全局日志级别
+    root: ${logging.level.root}
+    # spring web日志级别
+    org.springframework.web: ${logging.level.spring}
+    # spring security日志级别
+    org.springframework.security: ${logging.level.spring}
+    # 应用主包日志级别
+    com.pudding: ${logging.level.pudding}
+
+  file:
+    # 指定日志名字
+    name: ${spring.application.name}.log
+    # 指定日志文件路径
+    path: ${logging.file.path}

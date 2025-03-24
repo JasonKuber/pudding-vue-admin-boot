@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>application</artifactId>
+    <description>应用层</description>
     <packaging>pom</packaging>
     <modules>
         <module>application-admin</module>
@@ -27,13 +28,6 @@
         <dependency>
             <groupId>com.pudding</groupId>
             <artifactId>infrastructure</artifactId>
-            <version>${pudding.version}</version>
-        </dependency>
-
-        <!-- api-admin模块 -->
-        <dependency>
-            <groupId>com.pudding</groupId>
-            <artifactId>api-admin</artifactId>
             <version>${pudding.version}</version>
         </dependency>
 

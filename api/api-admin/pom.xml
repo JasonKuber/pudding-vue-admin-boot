@@ -17,4 +17,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+
+        <!-- application模块 -->
+        <dependency>
+            <groupId>com.pudding</groupId>
+            <artifactId>application-admin</artifactId>
+            <version>${pudding.version}</version>
+        </dependency>
+
+    </dependencies>
+
 </project>
