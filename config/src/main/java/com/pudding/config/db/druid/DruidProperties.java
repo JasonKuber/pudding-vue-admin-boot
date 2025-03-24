@@ -1,25 +1,26 @@
 package com.pudding.config.db.druid;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.pudding.config.db.DataSourceProperties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-
 @Data
 @Component
-@ConfigurationProperties(prefix = "spring.datasource")
-public class DataSourceProperties {
+@ConfigurationProperties(prefix = "spring.datasource.druid")
+public class DruidProperties {
 
-    private String url;
-    private String username;
-    private String password;
-    private String driverClassName;
+
+    @Resource
+    private DataSourceProperties dataSourceProperties;
+
     private int initialSize;
     private int minIdle;
     private int maxActive;
@@ -35,15 +36,16 @@ public class DataSourceProperties {
     private String filters;
     private String connectionProperties;
 
+
     @Bean
     @Primary
     public DataSource dataSource() {
 
         DruidDataSource datasource = new DruidDataSource();
-        datasource.setUrl(url);
-        datasource.setUsername(username);
-        datasource.setPassword(password);
-        datasource.setDriverClassName(driverClassName);
+        datasource.setUrl(dataSourceProperties.getUrl());
+        datasource.setUsername(dataSourceProperties.getUsername());
+        datasource.setPassword(dataSourceProperties.getPassword());
+        datasource.setDriverClassName(dataSourceProperties.getDriverClassName());
 
         //configuration
         datasource.setInitialSize(initialSize);
@@ -68,4 +70,5 @@ public class DataSourceProperties {
         datasource.setConnectionProperties(connectionProperties);
         return datasource;
     }
+
 }

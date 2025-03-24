@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.IllegalSQLInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import org.mybatis.spring.annotation.MapperScan;
+import org.apache.ibatis.logging.nologging.NoLoggingImpl;
+import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class MybatisPlusConfig {
@@ -24,5 +26,23 @@ public class MybatisPlusConfig {
         interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
         return interceptor;
     }
+
+    @Bean
+    @Profile("dev")
+    public org.apache.ibatis.session.Configuration devMybatisConfig() {
+        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+        configuration.setLogImpl(StdOutImpl.class); // 使用 SLF4J 打印 SQL 日志
+        return configuration;
+    }
+
+    @Bean
+    @Profile("prod")
+    public org.apache.ibatis.session.Configuration prodMybatisConfig() {
+        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+        configuration.setLogImpl(NoLoggingImpl.class); // 使用 SLF4J 打印 SQL 日志
+        return configuration;
+    }
+
+
 
 }

@@ -30,7 +30,7 @@ public class SwaggerConfig {
 
     @Bean
     public Docket docket(Environment environment) {
-        // 设置吓死你hi的swagger环境信息，判断是否处于自己设定的环境中，为了安全生产环境不开放Swagger
+        // 设置要显示的swagger环境信息，判断是否处于自己设定的环境中，为了安全生产环境不开放Swagger
         Profiles profiles = Profiles.of("dev", "test");
         boolean enableSwagger = environment.acceptsProfiles(profiles);
         return new Docket(DocumentationType.OAS_30) // 指定文档类型
@@ -75,6 +75,4 @@ public class SwaggerConfig {
 
         return parameterList;
     }
-
-
 }
