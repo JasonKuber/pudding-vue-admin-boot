@@ -38,9 +38,9 @@ redis:
 logging:
   level:
     # 根日志级别
-    root: DEBUG
+    root: INFO
     # spring 日志级别
-    spring: DEBUG
+    spring: INFO
     # 业务日志级别
     pudding: DEBUG
   file:
