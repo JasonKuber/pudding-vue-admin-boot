@@ -2,7 +2,7 @@ package com.pudding.config.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pudding.common.dto.ApiResponse;
+import com.pudding.common.vo.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -18,7 +18,7 @@ import javax.annotation.Resource;
  * 设置全局统一返回
  */
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.pudding.api")
 public class ResponseBodyConfig implements ResponseBodyAdvice<Object> {
     @Resource
     private ObjectMapper objectMapper;
@@ -30,7 +30,8 @@ public class ResponseBodyConfig implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         // 如果返回值类型为ApiResponse 或者 void 直接返回false
-        return !returnType.getParameterType().equals(ApiResponse.class) || !returnType.getParameterType().equals(Void.class);
+        return !returnType.getParameterType().equals(ApiResponse.class) ||
+                !returnType.getParameterType().equals(Void.class);
     }
 
     @Override
@@ -50,6 +51,7 @@ public class ResponseBodyConfig implements ResponseBodyAdvice<Object> {
                 return ApiResponse.error();
             }
         }
+
 
         return ApiResponse.success(body);
     }

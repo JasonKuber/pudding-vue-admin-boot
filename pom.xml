@@ -12,13 +12,12 @@
     <modules>
         <module>application</module>
         <module>common</module>
-        <module>domain</module>
-        <module>infrastructure</module>
         <module>api</module>
-        <module>client</module>
         <module>config</module>
-        <module>job</module>
         <module>bootstrap</module>
+        <module>manager</module>
+        <module>domain</module>
+        <module>repository</module>
     </modules>
 
     <properties>
@@ -41,6 +40,9 @@
         <!-- swagger -->
         <springfox.version>3.0.0</springfox.version>
         <knife4j.version>3.0.3</knife4j.version>
+
+        <jjwt.version>0.11.5</jjwt.version>
+        <fastjson.version>2.0.39</fastjson.version>
 
         <!-- 项目版本 -->
         <pudding.version>1.0-SNAPSHOT</pudding.version>
@@ -107,6 +109,37 @@
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
+            </dependency>
+
+            <!-- JWT支持 -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- fastjson2 -->
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2-extension-spring6</artifactId>
+                <version>${fastjson.version}</version>
             </dependency>
 
         </dependencies>

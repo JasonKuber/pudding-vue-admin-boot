@@ -23,6 +23,7 @@
         <dependency>
             <groupId>com.pudding</groupId>
             <artifactId>common</artifactId>
+            <version>${pudding.version}</version>
         </dependency>
 
         <!-- SpringBoot Start Web 用于提供Web功能 -->
@@ -42,6 +43,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!--springSecurity-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
         <!-- Redis 依赖 -->
@@ -82,15 +89,10 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
-        <!-- swagger -->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
         </dependency>
 
         <!-- knife4j swagger美化-->
@@ -99,12 +101,6 @@
             <artifactId>knife4j-spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- common模块 -->
-        <dependency>
-            <groupId>com.pudding</groupId>
-            <artifactId>common</artifactId>
-            <version>${pudding.version}</version>
-        </dependency>
 
 
     </dependencies>

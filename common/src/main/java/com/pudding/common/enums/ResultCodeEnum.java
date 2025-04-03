@@ -12,15 +12,25 @@ import lombok.Getter;
 public enum ResultCodeEnum implements BaseErrorInfoInterface {
 
     SUCCESS("200","成功!"),
-    HTTP_METHOD_ERROR("405","请求类型错误!"),
+
+    NOT_LOGIN("401","请先登录"),
+    TOKEN_INVALID("401","Token无效"),
+
+
 
     VALIDATE_ERROR("400","参数校验错误!" ),
     INVALID_REQUEST_BODY("400", "请求数据格式有误，请检查后再试"),
     PATH_VARIABLE_ERROR("400", "URL中的参数类型错误"),
     REQUEST_PARAM_REQUIRED_ERROR("400","请求缺少必要参数"),
+    ACCOUNT_OR_PASSWORD_ERROR("400","账号或密码错误"),
 
 
 
+    LIMITED_ACCESS("403","访问权限受限"),
+    ACCOUNT_DISABLED("403","账号已被禁用"),
+
+
+    HTTP_METHOD_ERROR("405","请求类型错误!"),
 
     SYS_ERROR("500","服务器内部错误!"),
     DATABASE_ERROR("500","数据库异常"),

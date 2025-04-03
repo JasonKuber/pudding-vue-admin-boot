@@ -20,8 +20,8 @@ server:
 spring:
   mvc:
     pathmatch:
-      # SpringBoot 2.6之后想用Swagger2就必须配置该项
-      matching-strategy: ant_path_matcher
+      # SpringBoot 2.6之后想用Swagger就必须配置该项
+      matching-strategy: ANT_PATH_MATCHER
   application:
     name: Pudding-Vue-Admin
   profiles:
@@ -150,8 +150,6 @@ spring:
         session-stat-enable: true
         # session统计的最大个数
         session-stat-max-count: 100
-
-  # redis配置
   redis:
     # 链接地址
     host: ${redis.host}
@@ -176,14 +174,12 @@ spring:
         min-idle: 0
 
 
-
-
 # mybatisPlus配置
 mybatis-plus:
   # Mapper.xml位置 多个目录用逗号或分号分割线
   mapper-locations: classpath:mapper/*.xml
   # Mybatis 别名包扫描路径，通过该属性可以给包中的类注册别名，多个路径用逗号分隔
-  type-aliases-package: com.pudding.infrastructure.entity
+  type-aliases-package: com.pudding.repository.po
   global-config:
     db-config:
       # 主键类型自增
@@ -198,13 +194,13 @@ mybatis-plus:
 logging:
   level:
     # 设置全局日志级别
-    root: ${logging.level.root}
+    root: DEBUG
     # spring web日志级别
-    org.springframework.web: ${logging.level.spring}
+    org.springframework.web: DEBUG
     # spring security日志级别
-    org.springframework.security: ${logging.level.spring}
+    org.springframework.security: DEBUG
     # 应用主包日志级别
-    com.pudding: ${logging.level.pudding}
+    com.pudding: DEBUG
 
   file:
     # 指定日志名字

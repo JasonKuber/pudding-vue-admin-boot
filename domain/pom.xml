@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>domain</artifactId>
-    <description>领域模型、业务核心定义</description>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -20,12 +19,12 @@
 
     <dependencies>
 
-        <!-- common模块 -->
         <dependency>
             <groupId>com.pudding</groupId>
             <artifactId>common</artifactId>
             <version>${pudding.version}</version>
         </dependency>
+
     </dependencies>
 
 </project>

@@ -1,6 +1,6 @@
 package com.pudding.config.exception;
 
-import com.pudding.common.dto.ApiResponse;
+import com.pudding.common.vo.ApiResponse;
 import com.pudding.common.enums.ResultCodeEnum;
 import com.pudding.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;

@@ -24,10 +24,9 @@
 
     <dependencies>
 
-        <!-- infrastructure模块 -->
         <dependency>
             <groupId>com.pudding</groupId>
-            <artifactId>infrastructure</artifactId>
+            <artifactId>manager</artifactId>
             <version>${pudding.version}</version>
         </dependency>
 

@@ -4,7 +4,7 @@ server:
 datasource:
   # Mysql连接配置
   mysql:
-    url: jdbc:mysql://127.0.0.1:3306/pudding_datasource?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://127.0.0.1:3306/pudding_datasource?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
     password: 123456
 
@@ -38,7 +38,7 @@ redis:
 logging:
   level:
     # 根日志级别
-    root: INFO
+    root: DEBUG
     # spring 日志级别
     spring: DEBUG
     # 业务日志级别
