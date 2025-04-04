@@ -37,7 +37,6 @@ public class PasswordAuthenticationProvider implements AuthenticationProvider {
 
         return new PasswordAuthenticationToken(puddingUserEntity,
                 null,
-                System.currentTimeMillis(),
                 Collections.emptyList());
     }
 

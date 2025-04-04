@@ -15,6 +15,7 @@ public enum ResultCodeEnum implements BaseErrorInfoInterface {
 
     NOT_LOGIN("401","请先登录"),
     TOKEN_INVALID("401","Token无效"),
+    TOKEN_IP_NO_MATCH("401","Token与IP不匹配"),
 
 
 

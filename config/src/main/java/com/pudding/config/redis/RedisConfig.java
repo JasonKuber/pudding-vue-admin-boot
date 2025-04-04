@@ -109,10 +109,6 @@ public class RedisConfig {
         redisTemplate.setKeySerializer(stringRedisSerializer);
         // hash的key也采用String的序列化方式
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
-        // value序列化方式采用jackson
-        redisTemplate.setValueSerializer(stringRedisSerializer);
-        // hash的value序列化方式采用jackson
-        redisTemplate.setHashValueSerializer(jsonSerializer);
 
         redisTemplate.afterPropertiesSet();
         return redisTemplate;

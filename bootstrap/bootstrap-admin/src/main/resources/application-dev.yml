@@ -46,3 +46,17 @@ logging:
   file:
     # 文件输出路径
     path: ./logs
+
+jwt:
+  # 访问Token
+  accessToken:
+    issuer: 'PuddingAccess'
+    # 过期时间秒
+    expirationTime: 3600
+    secretKey: 'xZ26TSyJ5ZU8rUGhPoQcm0_tPl-_iZ-XjUAOqUoVKbc'
+  # 刷新Token
+  refreshToken:
+    issuer: "PuddingRefresh"
+    # 过期时间秒
+    expirationTime: 86400
+    secretKey: 'RZ8O8brN_5TiiH_dL2K_YDzkwWsTXR09nt6eHDyDXjI'

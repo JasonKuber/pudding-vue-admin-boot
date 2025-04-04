@@ -9,11 +9,11 @@ public class LoginUserVO {
     @ApiModelProperty(value = "账户名")
     private String userName;
 
-    @ApiModelProperty(value = "授权令牌")
-    private String token;
+    @ApiModelProperty(value = "访问令牌")
+    private String accessToken;
 
-    @ApiModelProperty(value = "uid")
-    private String uid;
+    @ApiModelProperty(value = "刷新令牌")
+    private String refreshToken;
 
     @ApiModelProperty(value = "登录时间")
     private Long loginTime;

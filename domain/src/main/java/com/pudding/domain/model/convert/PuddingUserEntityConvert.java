@@ -10,8 +10,6 @@ public class PuddingUserEntityConvert {
     public static LoginUserVO toVo(PuddingUserEntity entity) {
         LoginUserVO vo = new LoginUserVO();
         vo.setUserName(entity.getUserName());
-        vo.setToken("");
-        vo.setUid("");
         vo.setLoginTime(0L);
         return vo;
     }

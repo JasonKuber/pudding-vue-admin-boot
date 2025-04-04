@@ -3,7 +3,9 @@ package com.pudding.bootstrap.admin.security.filter;
 import com.pudding.application.admin.service.security.password.token.PasswordAuthenticationToken;
 import com.pudding.common.enums.ResultCodeEnum;
 import com.pudding.common.utils.AssertUtils;
+import com.pudding.common.utils.http.IpUtils;
 import com.pudding.common.utils.security.JwtTokenUtil;
+import com.pudding.domain.model.entity.PuddingUserEntity;
 import com.pudding.repository.cache.redis.StringOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +26,7 @@ import java.util.Collections;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Resource
-    private StringOperations<String> stringOperations;
+    private StringOperations<PuddingUserEntity> stringOperations;
 
 
     @Override
@@ -33,25 +35,26 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = request.getHeader("Authorization Bearer");
-        String uid = request.getHeader("uid");
+        // 前端传递的AccessToken
+        String accessToken = request.getHeader("Authorization Bearer");
+        AssertUtils.isNotEmpty(accessToken, ResultCodeEnum.NOT_LOGIN);
         String loginType = request.getHeader("login-type");
-        String loginTime = request.getHeader("login-time");
-        AssertUtils.isNotEmpty(token, ResultCodeEnum.NOT_LOGIN);
-        AssertUtils.isNotEmpty(uid, ResultCodeEnum.NOT_LOGIN);
+        AssertUtils.isNotEmpty(loginType, ResultCodeEnum.REQUEST_PARAM_REQUIRED_ERROR);
 
-        AssertUtils.isTrue(JwtTokenUtil.validateToken(token), ResultCodeEnum.TOKEN_INVALID);
+        // 校验AccessToken
+        AssertUtils.isTrue(JwtTokenUtil.validateAccessToken(accessToken), ResultCodeEnum.TOKEN_INVALID);
 
-        String redisKey = "token:key:" + uid;
-        String redisToken = stringOperations.get(redisKey);
-        AssertUtils.isNotNull(redisToken,ResultCodeEnum.TOKEN_INVALID);
-        AssertUtils.equals(token,redisToken,ResultCodeEnum.TOKEN_INVALID);
+        // 获取accessToken中的数据
+        String accessId = JwtTokenUtil.extractAccessTokenSubject(accessToken);
+        String clientIP =(String) JwtTokenUtil.extractAccessTokenClaim(accessToken, claims -> claims.get("clientIP"));
+        AssertUtils.equals(clientIP, IpUtils.getIpAddress(request),ResultCodeEnum.TOKEN_IP_NO_MATCH);
 
-        String username = JwtTokenUtil.extractUsername(token);
+        String redisKey = "token:key:" + accessId;
+        PuddingUserEntity puddingUserEntity = stringOperations.get(redisKey);
 
         Authentication authentication = null;
         if (loginType.equals("password")) {
-            authentication = new PasswordAuthenticationToken(loginTime, username, Long.valueOf(loginTime), Collections.emptyList());
+            authentication = new PasswordAuthenticationToken(puddingUserEntity, null, Collections.emptyList());
             // 将authentication存入 ThreadLocal,方便后续获取用户信息
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

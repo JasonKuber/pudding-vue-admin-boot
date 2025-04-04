@@ -1,7 +1,6 @@
 package com.pudding.application.admin.service.security.password.token;
 
 import com.pudding.common.utils.AssertUtils;
-import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
@@ -27,11 +26,6 @@ public class PasswordAuthenticationToken extends AbstractAuthenticationToken {
      */
     private Object credentials;
 
-    /**
-     * 登录时间
-     */
-    @Getter
-    private Long loginTime;
 
 
     /**
@@ -47,12 +41,11 @@ public class PasswordAuthenticationToken extends AbstractAuthenticationToken {
     /**
      经过身份验证后，将权限放进去，setAuthenticated(true)设置为可信令牌
      */
-    public PasswordAuthenticationToken(Object principal, Object credentials,Long loginTime,
+    public PasswordAuthenticationToken(Object principal, Object credentials,
                                        Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = principal;
         this.credentials = credentials;
-        this.loginTime = loginTime;
         super.setAuthenticated(true); // must use super, as we override
     }
 

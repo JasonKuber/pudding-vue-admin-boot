@@ -18,6 +18,13 @@
     </properties>
 
     <dependencies>
+
+        <!-- SpringBoot Start Web 用于提供Web功能 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
         <!-- swagger -->
         <dependency>
             <groupId>io.springfox</groupId>
