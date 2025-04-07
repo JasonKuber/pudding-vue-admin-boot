@@ -1,12 +1,12 @@
 package com.pudding.bootstrap.admin.security.config;
 
 import com.pudding.api.admin.security.password.filter.PasswordAuthenticationLoginFilter;
+import com.pudding.application.admin.service.security.handler.AdminLogoutHandler;
+import com.pudding.application.admin.service.security.handler.AdminLogoutSuccessHandler;
 import com.pudding.application.admin.service.security.handler.LoginAuthenticationFailureHandler;
 import com.pudding.application.admin.service.security.password.handler.PasswordAuthenticationSuccessHandler;
 import com.pudding.application.admin.service.security.password.provider.PasswordAuthenticationProvider;
 import com.pudding.bootstrap.admin.security.filter.TokenAuthenticationFilter;
-import com.pudding.application.admin.service.security.handler.AdminLogoutHandler;
-import com.pudding.application.admin.service.security.handler.AdminLogoutSuccessHandler;
 import com.pudding.bootstrap.admin.security.handler.EntryPointUnauthorizedHandler;
 import com.pudding.bootstrap.admin.security.handler.RequestAccessDeniedHandler;
 import com.pudding.config.web.NotAuthenticationConfig;
@@ -24,7 +24,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -123,8 +122,9 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
 
-                // 将Token校验过滤器配置到过滤器链中，否则不生效，放到UsernamePasswordAuthenticationFilter之前
-                .addFilterBefore(passwordAuthenticationLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+
+                // 将Token校验过滤器配置到过滤器链中，否则不生效，放到LogoutFilter之前
+                .addFilterBefore(passwordAuthenticationLoginFilter(), LogoutFilter.class)
                 .addFilterBefore(authenticationTokenFilterBean(), LogoutFilter.class);
     }
 
