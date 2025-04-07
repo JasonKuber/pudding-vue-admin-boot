@@ -1,12 +1,16 @@
 package com.pudding.bootstrap.admin.security.filter;
 
 import com.pudding.application.admin.service.security.password.token.PasswordAuthenticationToken;
+import com.pudding.common.constants.http.HeaderConstants;
 import com.pudding.common.enums.ResultCodeEnum;
 import com.pudding.common.utils.AssertUtils;
+import com.pudding.common.utils.http.HeaderUtils;
 import com.pudding.common.utils.http.IpUtils;
 import com.pudding.common.utils.security.JwtTokenUtil;
 import com.pudding.domain.model.entity.PuddingUserEntity;
-import com.pudding.repository.cache.redis.StringOperations;
+import com.pudding.manager.user.PuddingUserManager;
+import com.pudding.repository.cache.token.TokenBlacklistCache;
+import io.jsonwebtoken.Claims;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,7 +30,11 @@ import java.util.Collections;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Resource
-    private StringOperations<PuddingUserEntity> stringOperations;
+    private PuddingUserManager puddingUserManager;
+
+    @Resource
+    private TokenBlacklistCache tokenBlacklistCache;
+
 
 
     @Override
@@ -36,21 +44,29 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // 前端传递的AccessToken
-        String accessToken = request.getHeader("Authorization Bearer");
+        String accessToken = HeaderUtils.getAuthorizationBearerToken(request);
         AssertUtils.isNotEmpty(accessToken, ResultCodeEnum.NOT_LOGIN);
-        String loginType = request.getHeader("login-type");
+        String loginType = request.getHeader(HeaderConstants.LOGIN_TYPE);
         AssertUtils.isNotEmpty(loginType, ResultCodeEnum.REQUEST_PARAM_REQUIRED_ERROR);
 
         // 校验AccessToken
         AssertUtils.isTrue(JwtTokenUtil.validateAccessToken(accessToken), ResultCodeEnum.TOKEN_INVALID);
 
+
         // 获取accessToken中的数据
-        String accessId = JwtTokenUtil.extractAccessTokenSubject(accessToken);
-        String clientIP =(String) JwtTokenUtil.extractAccessTokenClaim(accessToken, claims -> claims.get("clientIP"));
+        Claims claim = JwtTokenUtil.extractAccessTokenClaim(accessToken);
+
+        // 校验IP一致
+        String clientIP =(String) claim.get("clientIP");
         AssertUtils.equals(clientIP, IpUtils.getIpAddress(request),ResultCodeEnum.TOKEN_IP_NO_MATCH);
 
-        String redisKey = "token:key:" + accessId;
-        PuddingUserEntity puddingUserEntity = stringOperations.get(redisKey);
+        // 校验Token是否已经被拉黑
+        String jti = claim.getId();
+        AssertUtils.isFalse(tokenBlacklistCache.validateAccessTokenBlacklist(accessToken,jti),ResultCodeEnum.TOKEN_INVALID);
+
+
+        String userId = claim.getSubject();
+        PuddingUserEntity puddingUserEntity = puddingUserManager.getCacheById(userId);
 
         Authentication authentication = null;
         if (loginType.equals("password")) {

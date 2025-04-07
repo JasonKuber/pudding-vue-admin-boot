@@ -11,6 +11,9 @@ import org.springframework.security.core.AuthenticationException;
 import javax.annotation.Resource;
 import java.util.Collections;
 
+/**
+ * 密码登录自定义Provider
+ */
 public class PasswordAuthenticationProvider implements AuthenticationProvider {
 
     @Resource

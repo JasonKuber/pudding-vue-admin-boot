@@ -2,11 +2,12 @@ package com.pudding.manager.login.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.PhoneUtil;
-import com.pudding.repository.po.PuddingUserPO;
-import com.pudding.repository.service.PuddingUserService;
 import com.pudding.domain.model.entity.PuddingUserEntity;
 import com.pudding.manager.convert.PuddingUserConvert;
 import com.pudding.manager.login.PasswordLoginManager;
+import com.pudding.repository.cache.user.PuddingUserCache;
+import com.pudding.repository.po.PuddingUserPO;
+import com.pudding.repository.service.PuddingUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -26,6 +27,8 @@ public class PasswordLoginManagerImpl implements PasswordLoginManager {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final PuddingUserCache puddingUserCache;
+
     @Override
     public PuddingUserEntity login(String credentials, String password) {
         PuddingUserPO puddingUserPO = null;
@@ -40,19 +43,22 @@ public class PasswordLoginManagerImpl implements PasswordLoginManager {
             puddingUserPO = puddingUserService.getByAccount(credentials);
         }
 
-        if (ObjectUtil.isNull(puddingUserPO) || passwordEncoder.matches(passwordEncoder.encode(password), puddingUserPO.getPassword())) {
+        if (ObjectUtil.isNull(puddingUserPO)) {
             throw new BadCredentialsException("账号或密码错误");
         }
-//        AssertUtils.isNotNull(puddingUserPO, ResultCodeEnum.ACCOUNT_OR_PASSWORD_ERROR);
 
-        // 对比密码
-//        AssertUtils.isTrue(passwordEncoder.matches(passwordEncoder.encode(password), puddingUserPO.getPassword()), ResultCodeEnum.ACCOUNT_OR_PASSWORD_ERROR);
+        if (passwordEncoder.matches(passwordEncoder.encode(password), puddingUserPO.getPassword())) {
+            throw new BadCredentialsException("账号或密码错误");
+        }
+
+        puddingUserCache.cacheById(puddingUserPO.getId().toString(),puddingUserPO);
 
         PuddingUserEntity entity = PuddingUserConvert.toEntity(puddingUserPO);
         if (!entity.getStatus()) {
             throw new DisabledException("账号已被禁用");
         }
-//        AssertUtils.isTrue(entity.getStatus(),ResultCodeEnum.ACCOUNT_DISABLED);
+
+
         return entity;
     }
 }

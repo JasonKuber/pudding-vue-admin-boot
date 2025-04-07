@@ -24,6 +24,7 @@ public enum ResultCodeEnum implements BaseErrorInfoInterface {
     PATH_VARIABLE_ERROR("400", "URL中的参数类型错误"),
     REQUEST_PARAM_REQUIRED_ERROR("400","请求缺少必要参数"),
     ACCOUNT_OR_PASSWORD_ERROR("400","账号或密码错误"),
+    USER_INFO_ERROR("400","用户不存在"),
 
 
 
@@ -35,6 +36,8 @@ public enum ResultCodeEnum implements BaseErrorInfoInterface {
 
     SYS_ERROR("500","服务器内部错误!"),
     DATABASE_ERROR("500","数据库异常"),
+
+
     SQL_CONSTRAINT_ERROR("501", "唯一索引冲突"),
     ;
 

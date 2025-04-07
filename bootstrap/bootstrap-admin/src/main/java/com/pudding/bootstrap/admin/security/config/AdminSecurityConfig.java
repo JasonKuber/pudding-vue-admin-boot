@@ -5,7 +5,8 @@ import com.pudding.application.admin.service.security.handler.LoginAuthenticatio
 import com.pudding.application.admin.service.security.password.handler.PasswordAuthenticationSuccessHandler;
 import com.pudding.application.admin.service.security.password.provider.PasswordAuthenticationProvider;
 import com.pudding.bootstrap.admin.security.filter.TokenAuthenticationFilter;
-import com.pudding.bootstrap.admin.security.handler.AdminLogoutSuccessHandler;
+import com.pudding.application.admin.service.security.handler.AdminLogoutHandler;
+import com.pudding.application.admin.service.security.handler.AdminLogoutSuccessHandler;
 import com.pudding.bootstrap.admin.security.handler.EntryPointUnauthorizedHandler;
 import com.pudding.bootstrap.admin.security.handler.RequestAccessDeniedHandler;
 import com.pudding.config.web.NotAuthenticationConfig;
@@ -24,6 +25,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
+import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -43,6 +48,8 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
     private final RequestAccessDeniedHandler requestAccessDeniedHandler;
 
     private final AdminLogoutSuccessHandler adminLogoutSuccessHandler;
+
+    private final AdminLogoutHandler adminLogoutHandler;
 
     /**
      * 密码登录成功处理器
@@ -92,7 +99,16 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 处理登出
                 .logout()
                 .logoutUrl("/logout")
-                .logoutSuccessHandler(adminLogoutSuccessHandler)
+                .clearAuthentication(true)       // 替代 SecurityContextLogoutHandler
+                .invalidateHttpSession(true)     // 替代 SecurityContextLogoutHandler
+                .addLogoutHandler(adminLogoutHandler)                     // 自定义逻辑（优先执行）
+                .addLogoutHandler(new HeaderWriterLogoutHandler(
+                        new ClearSiteDataHeaderWriter(
+                                ClearSiteDataHeaderWriter.Directive.COOKIES,
+                                ClearSiteDataHeaderWriter.Directive.STORAGE
+                        )))  // 按需清理浏览器数据
+                .addLogoutHandler(new CookieClearingLogoutHandler("JSESSIONID")) // 按需清理 Cookie
+                .logoutSuccessHandler(adminLogoutSuccessHandler)          // 在LogoutHandler退出处理完毕后
                 .and()
 
                 // 处理异常情况：认证失败和权限不足
@@ -109,7 +125,7 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // 将Token校验过滤器配置到过滤器链中，否则不生效，放到UsernamePasswordAuthenticationFilter之前
                 .addFilterBefore(passwordAuthenticationLoginFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authenticationTokenFilterBean(), LogoutFilter.class);
     }
 
     /**

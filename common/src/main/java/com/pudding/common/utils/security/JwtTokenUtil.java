@@ -1,5 +1,6 @@
 package com.pudding.common.utils.security;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -133,6 +134,10 @@ public class JwtTokenUtil {
         return extractAccessTokenClaim(token, Claims::getSubject);
     }
 
+    public static Claims extractAccessTokenClaim(String token) {
+        return extractAllClaims(token,ACCESS_TOKEN_SECRET_KEY);
+    }
+
 
     /**
      * 提取Token中的特定Claim
@@ -211,8 +216,9 @@ public class JwtTokenUtil {
      */
     private static String createToken(String issuer,Map<String, Object> claims, String subject ,Long expirationTime,String secretKey) {
         return Jwts.builder()
-                .setIssuer(issuer)
                 .setClaims(claims)
+                .setIssuer(issuer)
+                .setId(IdUtil.getSnowflakeNextIdStr())
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime * 1000))
