@@ -14,6 +14,7 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.RequestParameterBuilder;
 import springfox.documentation.oas.annotations.EnableOpenApi;
+import springfox.documentation.schema.ScalarType;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.service.ParameterType;
@@ -43,24 +44,25 @@ public class SwaggerConfig {
         boolean enableSwagger = environment.acceptsProfiles(profiles);
         return new Docket(DocumentationType.OAS_30) // 指定文档类型
                 .apiInfo(apiInfo()) // 配置文档信息
+                .globalRequestParameters(getGlobalRequestParameters())
                 .enable(enableSwagger) // 只有当SpringBoot配置在dev或test环境时，才开启SwaggerApi文档功能
                 .select() // 选择需要生成文档的路径和接口
                 .apis(RequestHandlerSelectors.basePackage("com.pudding.api.admin.controller")) // 扫描指定包下的 API 控制器
 //                .apis(RequestHandlerSelectors.withMethodAnnotation(Api.class)) // 扫描包含注解的方式来确定要显示的接口
                 .paths(PathSelectors.any()) // 配置过滤哪些，设置对应的路径才获取
                 .build();
-//                .globalRequestParameters(authorizationHeader());
     }
 
     /**
      * 文档信息
+     *
      * @return
      */
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Pudding Vue Admin Boot Api文档")
                 .description("后端项目API文档")
-                .contact(new Contact("JasonKuber","https://github.com/JasonKuber","jasonkuberlove@gmail.com"))
+                .contact(new Contact("JasonKuber", "https://github.com/JasonKuber", "jasonkuberlove@gmail.com"))
                 .version("1.0")
                 .build();
     }
@@ -103,17 +105,23 @@ public class SwaggerConfig {
      *
      * @return Parameter 对象，表示全局的请求头
      */
-    private List<RequestParameter> authorizationHeader() {
+    private List<RequestParameter> getGlobalRequestParameters() {
 
         List<RequestParameter> parameterList = new ArrayList<>();
-        RequestParameterBuilder parameterBuilder = new RequestParameterBuilder();
-        parameterBuilder.name("Authorization")
+        parameterList.add(new RequestParameterBuilder()
+                .name("Authorization")
                 .description("Bearer <token>")
                 .in(ParameterType.HEADER)
+                .query(param -> param.model(model -> model.scalarModel(ScalarType.STRING)))
                 .required(true)
-                .build();
-        parameterList.add(parameterBuilder.build());
-
+                .build());
+        parameterList.add(new RequestParameterBuilder()
+                .name("login-type")
+                .description("登录方式 password/code")
+                .in(ParameterType.HEADER)
+                .query(param -> param.model(model -> model.scalarModel(ScalarType.STRING)))
+                .required(true)
+                .build());
         return parameterList;
     }
 }
