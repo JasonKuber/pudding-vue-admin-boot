@@ -1,5 +1,7 @@
 package com.pudding.api.admin.controller;
 
+import com.pudding.application.admin.service.auth.TokenAppService;
+import com.pudding.common.annotation.NotAuthentication;
 import com.pudding.domain.model.vo.LoginUserVO;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -7,11 +9,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @Api(tags = "授权接口")
 @RequiredArgsConstructor
 @RequestMapping
 public class AuthController {
+
+    private final TokenAppService tokenAppService;
 
     @ApiOperation("密码登录")
     @ApiImplicitParams({
@@ -29,6 +35,12 @@ public class AuthController {
     @PostMapping("/logout")
     public void logOut() {
         // 逻辑交给AdminLogoutHandler处理
+    }
+
+    @NotAuthentication
+    @PostMapping("/refresh")
+    public String refresh(HttpServletRequest request) {
+        return tokenAppService.refreshToken(request);
     }
 
 

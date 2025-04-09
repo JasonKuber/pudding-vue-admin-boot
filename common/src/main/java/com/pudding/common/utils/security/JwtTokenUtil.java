@@ -175,6 +175,10 @@ public class JwtTokenUtil {
         return claimsResolver.apply(claims);
     }
 
+    public static Claims extractRefreshTokenClaim(String token) {
+        return extractAllClaims(token,REFRESH_TOKEN_SECRET_KEY);
+    }
+
     /**
      * 验证访问Token
      *
@@ -264,7 +268,7 @@ public class JwtTokenUtil {
      * @return 是否过期
      */
     private static boolean isRefreshTokenExpired(String refreshToken) {
-        Date expiration = extractAccessTokenClaim(refreshToken, Claims::getExpiration);
+        Date expiration = extractRefreshTokenClaim(refreshToken, Claims::getExpiration);
         return expiration.before(new Date());
     }
 

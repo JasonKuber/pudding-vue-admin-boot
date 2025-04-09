@@ -1,5 +1,6 @@
 package com.pudding.bootstrap.admin.security.filter;
 
+import cn.hutool.core.util.StrUtil;
 import com.pudding.application.admin.service.security.password.token.PasswordAuthenticationToken;
 import com.pudding.common.constants.http.HeaderConstants;
 import com.pudding.common.enums.ResultCodeEnum;
@@ -43,36 +44,42 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+
         // 前端传递的AccessToken
         String accessToken = HeaderUtils.getAuthorizationBearerToken(request);
-        AssertUtils.isNotEmpty(accessToken, ResultCodeEnum.NOT_LOGIN);
-        String loginType = request.getHeader(HeaderConstants.LOGIN_TYPE);
-        AssertUtils.isNotEmpty(loginType, ResultCodeEnum.REQUEST_PARAM_REQUIRED_ERROR);
+        if (StrUtil.isNotBlank(accessToken)) {
 
-        // 校验AccessToken
-        AssertUtils.isTrue(JwtTokenUtil.validateAccessToken(accessToken), ResultCodeEnum.TOKEN_INVALID);
+            // 解析和校验Token
+            String loginType = request.getHeader(HeaderConstants.LOGIN_TYPE);
+            AssertUtils.isNotEmpty(loginType, ResultCodeEnum.REQUEST_PARAM_REQUIRED_ERROR);
 
-
-        // 获取accessToken中的数据
-        Claims claim = JwtTokenUtil.extractAccessTokenClaim(accessToken);
-
-        // 校验IP一致
-        String clientIP =(String) claim.get("clientIP");
-        AssertUtils.equals(clientIP, IpUtils.getIpAddress(request),ResultCodeEnum.TOKEN_IP_NO_MATCH);
-
-        // 校验Token是否已经被拉黑
-        String jti = claim.getId();
-        AssertUtils.isFalse(tokenBlacklistCache.validateAccessTokenBlacklist(accessToken,jti),ResultCodeEnum.TOKEN_INVALID);
+            // 校验AccessToken
+            AssertUtils.isTrue(JwtTokenUtil.validateAccessToken(accessToken), ResultCodeEnum.TOKEN_INVALID);
 
 
-        String userId = claim.getSubject();
-        PuddingUserEntity puddingUserEntity = puddingUserManager.getCacheById(userId);
+            // 获取accessToken中的数据
+            Claims claim = JwtTokenUtil.extractAccessTokenClaim(accessToken);
 
-        Authentication authentication = null;
-        if (loginType.equals("password")) {
-            authentication = new PasswordAuthenticationToken(puddingUserEntity, null, Collections.emptyList());
-            // 将authentication存入 ThreadLocal,方便后续获取用户信息
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // 校验IP一致
+            String clientIP =(String) claim.get("clientIP");
+            AssertUtils.equals(clientIP, IpUtils.getIpAddress(request),ResultCodeEnum.TOKEN_IP_NO_MATCH);
+
+            // 校验Token是否已经被拉黑
+            String jti = claim.getId();
+            AssertUtils.isFalse(tokenBlacklistCache.validateAccessTokenBlacklist(accessToken,jti),ResultCodeEnum.TOKEN_INVALID);
+
+
+            String userId = claim.getSubject();
+            PuddingUserEntity puddingUserEntity = puddingUserManager.getCacheById(userId);
+
+            Authentication authentication = null;
+            if (loginType.equals("password")) {
+                authentication = new PasswordAuthenticationToken(puddingUserEntity, null, Collections.emptyList());
+                // 将authentication存入 ThreadLocal,方便后续获取用户信息
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+
         }
 
         // 放行

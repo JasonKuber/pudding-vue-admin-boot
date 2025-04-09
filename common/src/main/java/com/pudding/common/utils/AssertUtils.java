@@ -62,6 +62,18 @@ public class AssertUtils {
     }
 
     /**
+     * 判断字符串是否为空
+     * @param str 字符串
+     * @param resultCode 响应状态码
+     */
+    public static void isNotBlank(String str,ResultCodeEnum resultCode){
+        if (StrUtil.isBlank(str)){
+            throw new BusinessException(resultCode);
+        }
+    }
+
+
+    /**
      * 如果集合为空或者长度小于1，则抛异常
      *
      * @param collection

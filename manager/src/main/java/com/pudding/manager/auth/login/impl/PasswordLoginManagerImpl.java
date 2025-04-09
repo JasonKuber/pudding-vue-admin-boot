@@ -1,10 +1,10 @@
-package com.pudding.manager.login.impl;
+package com.pudding.manager.auth.login.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.PhoneUtil;
 import com.pudding.domain.model.entity.PuddingUserEntity;
+import com.pudding.manager.auth.login.PasswordLoginManager;
 import com.pudding.manager.convert.PuddingUserConvert;
-import com.pudding.manager.login.PasswordLoginManager;
 import com.pudding.repository.cache.user.PuddingUserCache;
 import com.pudding.repository.po.PuddingUserPO;
 import com.pudding.repository.service.PuddingUserService;

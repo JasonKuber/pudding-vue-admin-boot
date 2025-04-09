@@ -3,7 +3,7 @@ package com.pudding.application.admin.service.security.password.provider;
 
 import com.pudding.application.admin.service.security.password.token.PasswordAuthenticationToken;
 import com.pudding.domain.model.entity.PuddingUserEntity;
-import com.pudding.manager.login.PasswordLoginManager;
+import com.pudding.manager.auth.login.PasswordLoginManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;

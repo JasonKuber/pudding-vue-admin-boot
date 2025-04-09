@@ -1,4 +1,4 @@
-package com.pudding.manager.login;
+package com.pudding.manager.auth.login;
 
 import com.pudding.domain.model.entity.PuddingUserEntity;
 

@@ -14,6 +14,9 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.sun.deploy.xml.XMLNode.WILDCARD;
 
 /**
  * 通过自定义注解@NotAuthentication，然后通过实现InitializingBean接口，
@@ -41,20 +44,63 @@ public class NotAuthenticationConfig implements InitializingBean, ApplicationCon
     @Override
     public void afterPropertiesSet() throws Exception {
         RequestMappingHandlerMapping mapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
-        Map<RequestMappingInfo, HandlerMethod> map = mapping.getHandlerMethods();
-        map.keySet().forEach(x -> {
-            HandlerMethod handlerMethod = map.get(x);
+        Map<RequestMappingInfo, HandlerMethod> handlerMethods = mapping.getHandlerMethods();
 
-            // 获取方法上边的注解 替代path variable 为 *
-            NotAuthentication method = AnnotationUtils.findAnnotation(handlerMethod.getMethod(), NotAuthentication.class);
-            Optional.ofNullable(method).ifPresent(inner -> Objects.requireNonNull(x.getPathPatternsCondition())
-                    .getPatternValues().forEach(url -> permitAllUrls.add(url.replaceAll(PATTERN, ASTERISK))));
+        handlerMethods.forEach((requestMappingInfo, handlerMethod) -> {
+            // 获取所有路径模式（兼容新旧版本）
+            Set<String> paths = getPaths(requestMappingInfo);
 
-            // 获取类上边的注解, 替代path variable 为 *
-            NotAuthentication controller = AnnotationUtils.findAnnotation(handlerMethod.getBeanType(), NotAuthentication.class);
-            Optional.ofNullable(controller).ifPresent(inner -> Objects.requireNonNull(x.getPathPatternsCondition())
-                    .getPatternValues().forEach(url -> permitAllUrls.add(url.replaceAll(PATTERN, ASTERISK))));
+            // 处理类和方法上的注解
+            processAnnotations(handlerMethod, paths);
         });
+    }
+
+    /**
+     * 兼容 Spring Boot 2.7 的路径获取方式
+     */
+    private Set<String> getPaths(RequestMappingInfo requestMappingInfo) {
+        // 先尝试新版本 PathPattern 方式（需要手动开启）
+        if (requestMappingInfo.getPathPatternsCondition() != null) {
+            return requestMappingInfo.getPathPatternsCondition().getPatterns()
+                    .stream()
+                    .map(pattern -> pattern.getPatternString())
+                    .collect(Collectors.toSet());
+        }
+        // 回退到旧版 Ant 风格路径
+        else if (requestMappingInfo.getPatternsCondition() != null) {
+            return requestMappingInfo.getPatternsCondition().getPatterns();
+        }
+        return Collections.emptySet();
+    }
+
+    /**
+     * 处理注解并添加路径
+     */
+    private void processAnnotations(HandlerMethod handlerMethod, Set<String> paths) {
+        // 处理方法级注解
+        NotAuthentication methodAnnotation = AnnotationUtils.findAnnotation(
+                handlerMethod.getMethod(), NotAuthentication.class);
+        if (methodAnnotation != null) {
+            addProcessedUrls(paths);
+        }
+
+        // 处理类级注解
+        NotAuthentication classAnnotation = AnnotationUtils.findAnnotation(
+                handlerMethod.getBeanType(), NotAuthentication.class);
+        if (classAnnotation != null) {
+            addProcessedUrls(paths);
+        }
+    }
+
+    /**
+     * 处理路径变量替换
+     */
+    private void addProcessedUrls(Set<String> paths) {
+        permitAllUrls.addAll(
+                paths.stream()
+                        .map(path -> path.replaceAll(PATTERN, WILDCARD))
+                        .collect(Collectors.toList())
+        );
     }
 
 

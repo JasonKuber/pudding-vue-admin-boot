@@ -54,5 +54,11 @@ public class PuddingUserPO extends BaseEntity  {
     @TableField(value = "is_deleted")
     private Integer isDeleted;
 
+    /**
+     * 创建者Id
+     */
+    @TableField(value = "create_by")
+    private String createBy;
+
 
 }
