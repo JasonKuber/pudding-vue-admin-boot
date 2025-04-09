@@ -39,6 +39,7 @@ public class AuthController {
 
     @NotAuthentication
     @PostMapping("/refresh")
+    @ApiOperation("使用刷新Token获取访问Token")
     public String refresh(HttpServletRequest request) {
         return tokenAppService.refreshToken(request);
     }
