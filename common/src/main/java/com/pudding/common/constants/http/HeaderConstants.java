@@ -12,14 +12,5 @@ public interface HeaderConstants {
      */
     String AUTHORIZATION_TYPE_BEARER = "Bearer ";
 
-    /**
-     * 刷新Token
-     */
-    String REFRESH_TOKEN = "Refresh-Token";
-
-    /**
-     * 登录方式
-     */
-    String LOGIN_TYPE = "login-type";
 
 }

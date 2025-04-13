@@ -38,6 +38,7 @@ public class PasswordAuthenticationLoginFilter extends AbstractAuthenticationPro
         identifier = identifier.trim();
         String password = request.getParameter(REQUEST_PARAM_PASSWORD);
         // 封装到token中提交
+//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(identifier, password);
         PasswordAuthenticationToken authenticationToken = new PasswordAuthenticationToken(identifier, password);
         this.setDetails(request,authenticationToken);
         return getAuthenticationManager().authenticate(authenticationToken);

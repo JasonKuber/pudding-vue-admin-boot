@@ -6,17 +6,20 @@ import com.pudding.application.admin.service.security.handler.AdminLogoutSuccess
 import com.pudding.application.admin.service.security.handler.LoginAuthenticationFailureHandler;
 import com.pudding.application.admin.service.security.password.handler.PasswordAuthenticationSuccessHandler;
 import com.pudding.application.admin.service.security.password.provider.PasswordAuthenticationProvider;
+import com.pudding.bootstrap.admin.security.filter.DynamicSecurityMetadataSource;
 import com.pudding.bootstrap.admin.security.filter.TokenAuthenticationFilter;
 import com.pudding.bootstrap.admin.security.handler.EntryPointUnauthorizedHandler;
 import com.pudding.bootstrap.admin.security.handler.RequestAccessDeniedHandler;
+import com.pudding.bootstrap.admin.security.manager.DynamicAccessDecisionManager;
 import com.pudding.config.web.NotAuthenticationConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,6 +27,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -60,6 +64,15 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     private final LoginAuthenticationFailureHandler loginAuthenticationFailureHandler;
 
+    /**
+     * 动态权限元数据源
+     */
+    private final DynamicSecurityMetadataSource dynamicSecurityMetadataSource;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(passwordAuthenticationProvider());
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -77,7 +90,6 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
                                 ).permitAll()
                                 // 通过编写路径放行接口
                                 .antMatchers(
-                                        "/login/password",
                                         "/swagger-resources",
                                         "/v3/api-docs",
                                         "/doc.html/**",
@@ -87,13 +99,6 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
                                 .anyRequest()
                                 .authenticated()
                 )
-                // 允许所有人访问 permitAll()表示不再拦截
-//                .antMatchers("/login").permitAll()
-                // hasRole()表示需要指定的角色才能访问资源
-//                .antMatchers("/hello").hasRole("ADMIN")
-                // 其它所有请求都要认证
-//                .anyRequest().authenticated()
-//                .and()
 
                 // 处理登出
                 .logout()
@@ -122,7 +127,8 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
 
-
+                // 注册权限拦截器
+                .addFilterBefore(filterSecurityInterceptor(), FilterSecurityInterceptor.class)
                 // 将Token校验过滤器配置到过滤器链中，否则不生效，放到LogoutFilter之前
                 .addFilterBefore(passwordAuthenticationLoginFilter(), LogoutFilter.class)
                 .addFilterBefore(authenticationTokenFilterBean(), LogoutFilter.class);
@@ -139,20 +145,20 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    /**
-     * 获取AuthenticationManager
-     *
-     * @param configuration
-     * @return
-     * @throws Exception
-     */
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
-    }
+//    /**
+//     * 获取AuthenticationManager
+//     *
+//     * @param configuration
+//     * @return
+//     * @throws Exception
+//     */
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+//        return configuration.getAuthenticationManager();
+//    }
 
     @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
+    public AuthenticationManager authenticationManagerBean() {
         return new ProviderManager(Arrays.asList(
                 passwordAuthenticationProvider()
         ));
@@ -166,6 +172,25 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
     public TokenAuthenticationFilter authenticationTokenFilterBean()  {
         return new TokenAuthenticationFilter();
     }
+
+    /**
+     *  配置自定义的FilterSecurityInterceptor
+     * @return
+     */
+    @Bean
+    public FilterSecurityInterceptor filterSecurityInterceptor() {
+        // 加载所有接口权限
+
+        FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
+        // 设置权限数据源
+        filterSecurityInterceptor.setSecurityMetadataSource(dynamicSecurityMetadataSource);
+        // 设置权限决策器
+        filterSecurityInterceptor.setAccessDecisionManager(new DynamicAccessDecisionManager());
+        // 设置认证管理器
+        filterSecurityInterceptor.setAuthenticationManager(authenticationManagerBean());
+        return filterSecurityInterceptor;
+    }
+
 
     @Bean
     public CorsFilter corsFilter() {
@@ -215,7 +240,7 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordAuthenticationProvider passwordAuthenticationProvider() {
+    public AuthenticationProvider passwordAuthenticationProvider() {
         return new PasswordAuthenticationProvider();
     }
 

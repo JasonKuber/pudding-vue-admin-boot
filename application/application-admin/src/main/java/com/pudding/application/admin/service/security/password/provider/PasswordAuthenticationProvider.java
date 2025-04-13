@@ -1,15 +1,27 @@
 package com.pudding.application.admin.service.security.password.provider;
 
 
+import com.pudding.application.admin.service.security.PermissionGrantedAuthority;
 import com.pudding.application.admin.service.security.password.token.PasswordAuthenticationToken;
+import com.pudding.common.security.AdminLoginUser;
+import com.pudding.domain.model.entity.PuddingApiPermissionEntity;
+import com.pudding.domain.model.entity.PuddingPermissionRoleEntity;
 import com.pudding.domain.model.entity.PuddingUserEntity;
+import com.pudding.domain.model.entity.PuddingUserRoleEntity;
 import com.pudding.manager.auth.login.PasswordLoginManager;
+import com.pudding.manager.permission.PuddingApiPermissionManager;
+import com.pudding.manager.permission.PuddingPermissionRoleManager;
+import com.pudding.manager.user.PuddingUserRoleManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.annotation.Resource;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 密码登录自定义Provider
@@ -18,6 +30,16 @@ public class PasswordAuthenticationProvider implements AuthenticationProvider {
 
     @Resource
     private PasswordLoginManager passwordLoginManager;
+
+    @Resource
+    private PuddingUserRoleManager puddingUserRoleManager;
+
+    @Resource
+    private PuddingPermissionRoleManager puddingPermissionRoleManager;
+
+    @Resource
+    private PuddingApiPermissionManager puddingPermissionManager;
+
 
 
 
@@ -29,18 +51,45 @@ public class PasswordAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        PasswordAuthenticationToken passwordAuthenticationToken = (PasswordAuthenticationToken) authentication;
 
         // 账号
-        String principal = (String) passwordAuthenticationToken.getPrincipal();
+        String identifier = (String) authentication.getPrincipal();
         // 密码
-        String credentials = (String) passwordAuthenticationToken.getCredentials();
+        String password = (String) authentication.getCredentials();
 
-        PuddingUserEntity puddingUserEntity = passwordLoginManager.login(principal, credentials);
+        // 获取用户信息
+        PuddingUserEntity puddingUserEntity = passwordLoginManager.login(identifier, password);
 
-        return new PasswordAuthenticationToken(puddingUserEntity,
+        // 获取用户关联信息
+        PuddingUserRoleEntity puddingUserRoleEntity = puddingUserRoleManager.getUserRoleByUserId(puddingUserEntity.getId());
+
+        // 用户角色权限
+        List<PuddingPermissionRoleEntity> permissionRoleEntityList =  puddingPermissionRoleManager.getPermissionRoleByRoleId(puddingUserRoleEntity.getRoleId());
+
+        // 查询权限
+        List<Long> permIdList = permissionRoleEntityList.stream()
+                .map(PuddingPermissionRoleEntity::getPermId)
+                .collect(Collectors.toList());
+        List<PuddingApiPermissionEntity> permissionEntityList =  puddingPermissionManager.listPermissionByIdList(permIdList);
+
+        List<GrantedAuthority> grantedAuthorityList  = new ArrayList<>();
+        for (PuddingApiPermissionEntity permission : permissionEntityList) {
+            PermissionGrantedAuthority authority = new PermissionGrantedAuthority(permission.getPermCode());
+            grantedAuthorityList.add(authority);
+        }
+
+        AdminLoginUser loginUser = new AdminLoginUser(puddingUserEntity.getId(),
+                puddingUserEntity.getUserName(),
+                puddingUserEntity.getPassword(),
+                puddingUserEntity.getPhoneNumber(),
+                puddingUserEntity.getAccount(),
+                puddingUserRoleEntity.getRoleId(),
+                grantedAuthorityList);
+
+
+        return new UsernamePasswordAuthenticationToken(loginUser,
                 null,
-                Collections.emptyList());
+                grantedAuthorityList);
     }
 
     /**

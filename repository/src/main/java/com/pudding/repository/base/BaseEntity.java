@@ -14,12 +14,21 @@ public class BaseEntity implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 主键id
+     */
     @TableId(type = IdType.AUTO,value = "id")
     private Long id;
 
+    /**
+     * 创建时间
+     */
     @TableField("create_time")
     private Date createTime;
 
+    /**
+     * 更新时间
+     */
     @TableField("update_time")
     private Date updateTime;
 

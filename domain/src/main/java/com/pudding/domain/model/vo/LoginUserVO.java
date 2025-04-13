@@ -12,9 +12,6 @@ public class LoginUserVO {
     @ApiModelProperty(value = "访问令牌")
     private String accessToken;
 
-    @ApiModelProperty(value = "刷新令牌")
-    private String refreshToken;
-
     @ApiModelProperty(value = "登录时间")
     private Long loginTime;
 

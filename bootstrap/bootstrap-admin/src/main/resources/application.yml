@@ -184,8 +184,14 @@ mybatis-plus:
     db-config:
       # 主键类型自增
       id-type: auto
+      # 全局配置逻辑删除实体类字段名
+      logic-delete-field: isDeleted
+      # 全局配置逻辑删除值 (已删除)
+      logic-delete-value: 1
+      # 全局配置逻辑删除值 (未删除)
+      logic-not-delete-value: 2
       # 表前缀
-  #      table-prefix: t_
+    #      table-prefix: t_
     # MybatisPlus 启动banner
     banner: false
 

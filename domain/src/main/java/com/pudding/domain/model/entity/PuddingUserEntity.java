@@ -16,6 +16,11 @@ public class PuddingUserEntity {
     private String userName;
 
     /**
+     * 密码
+     */
+    private String password;
+
+    /**
      * 账号
      */
     private String account;
@@ -42,8 +47,11 @@ public class PuddingUserEntity {
      * @return
      */
     public Boolean enable(Integer status) {
+
         return status.equals(1);
     }
+
+
 
 
 

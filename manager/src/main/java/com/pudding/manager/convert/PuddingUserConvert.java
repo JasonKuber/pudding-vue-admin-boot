@@ -12,6 +12,7 @@ public class PuddingUserConvert {
         puddingUserEntity.setId(puddingUserPO.getId());
         puddingUserEntity.setUserName(puddingUserPO.getUserName());
         puddingUserEntity.setAccount(puddingUserPO.getAccount());
+        puddingUserEntity.setPassword(puddingUserPO.getPassword());
         puddingUserEntity.setPhoneNumber(puddingUserPO.getPhoneNumber());
         puddingUserEntity.setEmail(puddingUserPO.getEmail());
         puddingUserEntity.setStatus(puddingUserEntity.enable(puddingUserPO.getStatus()));

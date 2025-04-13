@@ -1,12 +1,13 @@
 package com.pudding.application.admin.service.security.password.handler;
 
 import com.alibaba.fastjson2.JSON;
-import com.pudding.application.admin.service.security.password.token.PasswordAuthenticationToken;
+import com.pudding.domain.model.constants.auth.JwtConstants;
+import com.pudding.domain.model.constants.auth.LoginTypeConstants;
+import com.pudding.domain.model.constants.http.CookieConstants;
+import com.pudding.common.security.AdminLoginUser;
 import com.pudding.common.utils.http.IpUtils;
 import com.pudding.common.utils.security.JwtTokenUtil;
 import com.pudding.common.vo.ApiResponse;
-import com.pudding.domain.model.convert.PuddingUserEntityConvert;
-import com.pudding.domain.model.entity.PuddingUserEntity;
 import com.pudding.domain.model.vo.LoginUserVO;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -39,22 +40,21 @@ public class PasswordAuthenticationSuccessHandler implements AuthenticationSucce
                                         Authentication authentication)
             throws IOException, ServletException {
 
-        // 获取密码登录Token
-        PasswordAuthenticationToken passwordAuthenticationToken = (PasswordAuthenticationToken) authentication;
-
-        // 获取到认证成功从PasswordAuthenticationProvider中返回的数据
-        PuddingUserEntity entity = (PuddingUserEntity) passwordAuthenticationToken.getPrincipal();
+        // 获取到认证成功从AuthenticationProvider中返回的数据
+        AdminLoginUser entity = (AdminLoginUser) authentication.getPrincipal();
 
         String ipAddress = IpUtils.getIpAddress(request);
         Map<String, Object> claims = new HashMap<>();
-        claims.put("clientIP", ipAddress);
-        String accessToken = JwtTokenUtil.generateAccessToken(entity.getId().toString(), claims);
+        claims.put(JwtConstants.CLIENT_IP, ipAddress);
+        claims.put(JwtConstants.LOGIN_TYPE, LoginTypeConstants.PASSWORD);
+        claims.put(JwtConstants.ROLE_ID,entity.getRoleId());
+        String accessToken = JwtTokenUtil.generateAccessToken(entity.getUserId().toString(), claims);
 
-        String refreshToken = JwtTokenUtil.generateRefreshToken(entity.getId().toString(), claims);
+        String refreshToken = JwtTokenUtil.generateRefreshToken(entity.getUserId().toString(), claims);
 
-        LoginUserVO loginUserVO = PuddingUserEntityConvert.toVo(entity);
+        LoginUserVO loginUserVO = new LoginUserVO();
+        loginUserVO.setUserName(entity.getUsername());
         loginUserVO.setAccessToken(accessToken);
-        loginUserVO.setRefreshToken(refreshToken);
         loginUserVO.setLoginTime(System.currentTimeMillis());
 
         Date refreshTokenExpirationDate = JwtTokenUtil.extractRefreshTokenClaim(refreshToken, Claims::getExpiration);
@@ -63,7 +63,7 @@ public class PasswordAuthenticationSuccessHandler implements AuthenticationSucce
         // 返回Token
         boolean enableSecure = environment.acceptsProfiles("prod");
         response.setContentType("application/json;charset=UTF-8");
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+        ResponseCookie cookie = ResponseCookie.from(CookieConstants.REFRESH_TOKEN, refreshToken)
                 .httpOnly(true) // 只允许服务端访问， JavaScript无法读取，防止XSS攻击
                 .secure(enableSecure) // 仅在HTTPS连接中传输，防止中间人攻击
                 .sameSite("Strict") // 限制跨站请求携带Cookie，防止CSRF攻击 Strict 表示完全禁止跨站点请求携带这个 Cookie

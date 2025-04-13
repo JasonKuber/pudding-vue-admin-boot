@@ -1,6 +1,5 @@
 package com.pudding.application.admin.service.security.handler;
 
-import com.pudding.common.constants.http.HeaderConstants;
 import com.pudding.common.enums.ResultCodeEnum;
 import com.pudding.common.utils.AssertUtils;
 import com.pudding.common.utils.http.HeaderUtils;
@@ -32,14 +31,14 @@ public class AdminLogoutHandler implements LogoutHandler {
         String accessToken = HeaderUtils.getAuthorizationBearerToken(request);
         AssertUtils.isNotEmpty(accessToken, ResultCodeEnum.TOKEN_INVALID);
 
-        String refreshToken = request.getHeader(HeaderConstants.REFRESH_TOKEN);
-        AssertUtils.isNotEmpty(refreshToken,ResultCodeEnum.TOKEN_INVALID);
+//        String refreshToken = request.getHeader(HeaderConstants.REFRESH_TOKEN);
+//        AssertUtils.isNotEmpty(refreshToken,ResultCodeEnum.TOKEN_INVALID);
 
         String accessJti = JwtTokenUtil.extractAccessTokenClaim(accessToken, Claims::getId);
         tokenBlacklistCache.addAccessTokenBlacklist(accessToken,accessJti);
 
-        String refreshJti = JwtTokenUtil.extractRefreshTokenClaim(refreshToken, Claims::getId);
-        tokenBlacklistCache.addRefreshTokenBlacklist(refreshToken,refreshJti);
+//        String refreshJti = JwtTokenUtil.extractRefreshTokenClaim(refreshToken, Claims::getId);
+//        tokenBlacklistCache.addRefreshTokenBlacklist(refreshToken,refreshJti);
 
         // 清理SecurityContext
         SecurityContextHolder.clearContext();

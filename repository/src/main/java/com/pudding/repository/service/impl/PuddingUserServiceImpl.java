@@ -19,24 +19,21 @@ public class PuddingUserServiceImpl extends ServiceImpl<PuddingUserMapper, Puddi
     @Override
     public PuddingUserPO getByPhone(String phoneNumber) {
         LambdaQueryWrapper<PuddingUserPO> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(PuddingUserPO::getPhoneNumber,phoneNumber)
-                .eq(PuddingUserPO::getIsDeleted,2);
+        wrapper.eq(PuddingUserPO::getPhoneNumber,phoneNumber);
         return getOne(wrapper);
     }
 
     @Override
     public PuddingUserPO getByEmail(String email) {
         LambdaQueryWrapper<PuddingUserPO> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(PuddingUserPO::getEmail,email)
-                .eq(PuddingUserPO::getIsDeleted,2);
+        wrapper.eq(PuddingUserPO::getEmail,email);
         return getOne(wrapper);
     }
 
     @Override
     public PuddingUserPO getByAccount(String account) {
         LambdaQueryWrapper<PuddingUserPO> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(PuddingUserPO::getAccount,account)
-                .eq(PuddingUserPO::getIsDeleted,2);
+        wrapper.eq(PuddingUserPO::getAccount,account);
         return getOne(wrapper);
     }
 }

@@ -17,7 +17,7 @@ public class HeaderUtils {
     public static String getAuthorizationBearerToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(HeaderConstants.AUTHORIZATION);
         // 验证头是否存在且格式正确
-        if (StrUtil.isNotBlank(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
+        if (StrUtil.isNotBlank(authorizationHeader) && authorizationHeader.startsWith(HeaderConstants.AUTHORIZATION_TYPE_BEARER)) {
             return authorizationHeader.substring(7); // 截取 Token 部分
         }
         return null;
