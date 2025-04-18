@@ -49,6 +49,12 @@ public class PuddingUserPO extends BaseEntity  {
     private Integer status;
 
     /**
+     * 是否为admin 1=是 2=否
+     */
+    @TableField(value = "is_admin")
+    private Integer isAdmin;
+
+    /**
      * 是否删除 1=删除 2=未删除
      */
     @TableField(value = "is_deleted")

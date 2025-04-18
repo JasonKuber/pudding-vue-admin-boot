@@ -1,11 +1,11 @@
 package com.pudding.bootstrap.admin.security.manager;
 
+import com.pudding.application.admin.service.security.PermissionGrantedAuthority;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
@@ -22,11 +22,16 @@ public class DynamicAccessDecisionManager implements AccessDecisionManager {
         if (configAttributes == null || configAttributes.isEmpty()) return;
 
         // 获取当前用户拥有的权限
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Collection<PermissionGrantedAuthority> authorities = (Collection<PermissionGrantedAuthority>) authentication.getAuthorities();
 
         // 遍历请求所需权限，只要用户拥有任意一个，即可放行
         for (ConfigAttribute configAttribute : configAttributes) {
-            for (GrantedAuthority authority : authorities) {
+            for (PermissionGrantedAuthority authority : authorities) {
+                // ADMIN则直接允许访问
+                if (authority.getIsAdmin()) {
+                    return;
+                }
+
                 if (configAttribute.getAttribute().equals(authority.getAuthority())) {
                     // 匹配成功，允许访问
                     return;

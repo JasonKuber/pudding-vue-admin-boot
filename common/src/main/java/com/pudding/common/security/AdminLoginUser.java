@@ -20,11 +20,11 @@ public class AdminLoginUser implements UserDetails {
 
     private String password;
 
-    private String phone;
-
     private String account;
 
     private Long roleId;
+
+    private Boolean isAdmin;
 
     private List<GrantedAuthority> authorities;
 

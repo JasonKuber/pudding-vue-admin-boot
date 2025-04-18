@@ -1,18 +1,35 @@
 package com.pudding.application.admin.service.security;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.util.Assert;
+
 
 public class PermissionGrantedAuthority implements GrantedAuthority {
 
     private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
 
+    @Getter
+    private Boolean isAdmin;
+
     private final String permissionCode;
+
+    public PermissionGrantedAuthority(Boolean isAdmin) {
+        this.permissionCode = "";
+        this.isAdmin = isAdmin;
+    }
 
     public PermissionGrantedAuthority(String permissionCode) {
         Assert.hasText(permissionCode, "A granted authority textual representation is required");
         this.permissionCode = permissionCode;
+        this.isAdmin = false;
+    }
+
+    public PermissionGrantedAuthority(Boolean isAdmin,String permissionCode) {
+        Assert.hasText(permissionCode, "A granted authority textual representation is required");
+        this.permissionCode = permissionCode;
+        this.isAdmin = isAdmin;
     }
 
     @Override

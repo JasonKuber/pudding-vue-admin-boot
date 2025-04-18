@@ -52,7 +52,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private PuddingApiPermissionManager puddingPermissionManager;
 
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -64,37 +63,42 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = HeaderUtils.getAuthorizationBearerToken(request);
         if (StrUtil.isNotBlank(accessToken)) {
 
-
             // 校验AccessToken
             AssertUtils.isTrue(JwtTokenUtil.validateAccessToken(accessToken), ResultCodeEnum.TOKEN_INVALID);
-
 
             // 解析accessToken中的数据
             Claims claim = JwtTokenUtil.extractAccessTokenClaim(accessToken);
 
             // 校验IP一致
-            String clientIP =claim.get(JwtConstants.CLIENT_IP,String.class);
-            AssertUtils.equals(clientIP, IpUtils.getIpAddress(request),ResultCodeEnum.TOKEN_IP_NO_MATCH);
+            String clientIP = claim.get(JwtConstants.CLIENT_IP, String.class);
+            AssertUtils.equals(clientIP, IpUtils.getIpAddress(request), ResultCodeEnum.TOKEN_IP_NO_MATCH);
 
             // 校验Token是否已经被拉黑
             String jti = claim.getId();
-            AssertUtils.isFalse(tokenBlacklistCache.validateAccessTokenBlacklist(accessToken,jti),ResultCodeEnum.TOKEN_INVALID);
+            AssertUtils.isFalse(tokenBlacklistCache.validateAccessTokenBlacklist(accessToken, jti), ResultCodeEnum.TOKEN_INVALID);
 
             String userId = claim.getSubject();
             PuddingUserEntity puddingUserEntity = puddingUserManager.getCacheById(userId);
 
-            Long roleId = claim.get(JwtConstants.ROLE_ID, Long.class);
+            Boolean isAdmin = claim.get(JwtConstants.IS_ADMIN, Boolean.class);
 
-            // 用户角色权限
-            List<PuddingPermissionRoleEntity> permissionRoleEntityList =  puddingPermissionRoleManager.getPermissionRoleByRoleId(roleId);
+            UsernamePasswordAuthenticationToken authentication = null;
+            if (!isAdmin) {
+                Long roleId = claim.get(JwtConstants.ROLE_ID, Long.class);
+                // 用户角色权限
+                List<PuddingPermissionRoleEntity> permissionRoleEntityList = puddingPermissionRoleManager.getPermissionRoleByRoleId(roleId);
 
-            // 查询权限
-            List<Long> permIdList = permissionRoleEntityList.stream()
-                    .map(PuddingPermissionRoleEntity::getPermId)
-                    .collect(Collectors.toList());
-            List<PuddingApiPermissionEntity> permissionEntityList =  puddingPermissionManager.listPermissionByIdList(permIdList);
+                // 查询权限
+                List<Long> permIdList = permissionRoleEntityList.stream()
+                        .map(PuddingPermissionRoleEntity::getPermId)
+                        .collect(Collectors.toList());
+                List<PuddingApiPermissionEntity> permissionEntityList = puddingPermissionManager.listPermissionByIdList(permIdList);
 
-            UsernamePasswordAuthenticationToken authentication = getUsernamePasswordAuthenticationToken(permissionEntityList, puddingUserEntity, roleId);
+                authentication = getUsernamePasswordAuthenticationToken(permissionEntityList, puddingUserEntity, roleId);
+            } else {
+                authentication = getUsernamePasswordAuthenticationToken(puddingUserEntity);
+            }
+
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
@@ -105,8 +109,24 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     }
 
+    private static UsernamePasswordAuthenticationToken getUsernamePasswordAuthenticationToken(PuddingUserEntity puddingUserEntity) {
+        List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
+        grantedAuthorityList.add(new PermissionGrantedAuthority(true));
+
+        AdminLoginUser loginUser = new AdminLoginUser(puddingUserEntity.getId(),
+                puddingUserEntity.getUserName(),
+                puddingUserEntity.getPassword(),
+                puddingUserEntity.getAccount(),
+                0L,
+                puddingUserEntity.getIsAdmin(),
+                grantedAuthorityList);
+
+        return new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
+    }
+
     private static UsernamePasswordAuthenticationToken getUsernamePasswordAuthenticationToken(List<PuddingApiPermissionEntity> permissionEntityList, PuddingUserEntity puddingUserEntity, Long roleId) {
-        List<GrantedAuthority> grantedAuthorityList  = new ArrayList<>();
+        List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
+
         for (PuddingApiPermissionEntity permission : permissionEntityList) {
             PermissionGrantedAuthority authority = new PermissionGrantedAuthority(permission.getPermCode());
             grantedAuthorityList.add(authority);
@@ -115,16 +135,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         AdminLoginUser loginUser = new AdminLoginUser(puddingUserEntity.getId(),
                 puddingUserEntity.getUserName(),
                 puddingUserEntity.getPassword(),
-                puddingUserEntity.getPhoneNumber(),
                 puddingUserEntity.getAccount(),
                 roleId,
+                puddingUserEntity.getIsAdmin(),
                 grantedAuthorityList);
 
-        return new UsernamePasswordAuthenticationToken(loginUser,null,loginUser.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
     }
 
     /**
      * 因为使用的自定义File过滤器，所以在此放行静态资源
+     *
      * @param request current HTTP request
      * @return
      * @throws ServletException

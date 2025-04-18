@@ -17,4 +17,9 @@ public interface JwtConstants {
      */
     String LOGIN_TYPE = "login_type";
 
+    /**
+     * 是否为管理员
+     */
+    String IS_ADMIN = "is_admin";
+
 }

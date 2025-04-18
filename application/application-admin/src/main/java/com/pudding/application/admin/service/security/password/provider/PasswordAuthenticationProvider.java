@@ -1,47 +1,33 @@
 package com.pudding.application.admin.service.security.password.provider;
 
 
-import com.pudding.application.admin.service.security.PermissionGrantedAuthority;
 import com.pudding.application.admin.service.security.password.token.PasswordAuthenticationToken;
 import com.pudding.common.security.AdminLoginUser;
-import com.pudding.domain.model.entity.PuddingApiPermissionEntity;
-import com.pudding.domain.model.entity.PuddingPermissionRoleEntity;
 import com.pudding.domain.model.entity.PuddingUserEntity;
 import com.pudding.domain.model.entity.PuddingUserRoleEntity;
 import com.pudding.manager.auth.login.PasswordLoginManager;
-import com.pudding.manager.permission.PuddingApiPermissionManager;
-import com.pudding.manager.permission.PuddingPermissionRoleManager;
 import com.pudding.manager.user.PuddingUserRoleManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 /**
  * 密码登录自定义Provider
  */
 public class PasswordAuthenticationProvider implements AuthenticationProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(PasswordAuthenticationProvider.class);
     @Resource
     private PasswordLoginManager passwordLoginManager;
 
     @Resource
     private PuddingUserRoleManager puddingUserRoleManager;
-
-    @Resource
-    private PuddingPermissionRoleManager puddingPermissionRoleManager;
-
-    @Resource
-    private PuddingApiPermissionManager puddingPermissionManager;
-
-
-
 
     /**
      * 在此方法进行认证
@@ -59,37 +45,20 @@ public class PasswordAuthenticationProvider implements AuthenticationProvider {
 
         // 获取用户信息
         PuddingUserEntity puddingUserEntity = passwordLoginManager.login(identifier, password);
-
-        // 获取用户关联信息
-        PuddingUserRoleEntity puddingUserRoleEntity = puddingUserRoleManager.getUserRoleByUserId(puddingUserEntity.getId());
-
-        // 用户角色权限
-        List<PuddingPermissionRoleEntity> permissionRoleEntityList =  puddingPermissionRoleManager.getPermissionRoleByRoleId(puddingUserRoleEntity.getRoleId());
-
-        // 查询权限
-        List<Long> permIdList = permissionRoleEntityList.stream()
-                .map(PuddingPermissionRoleEntity::getPermId)
-                .collect(Collectors.toList());
-        List<PuddingApiPermissionEntity> permissionEntityList =  puddingPermissionManager.listPermissionByIdList(permIdList);
-
-        List<GrantedAuthority> grantedAuthorityList  = new ArrayList<>();
-        for (PuddingApiPermissionEntity permission : permissionEntityList) {
-            PermissionGrantedAuthority authority = new PermissionGrantedAuthority(permission.getPermCode());
-            grantedAuthorityList.add(authority);
+        AdminLoginUser loginUser = new AdminLoginUser();
+        loginUser.setUserId(puddingUserEntity.getId());
+        loginUser.setAccount(puddingUserEntity.getAccount());
+        loginUser.setUserName(puddingUserEntity.getUserName());
+        loginUser.setPassword(puddingUserEntity.getPassword());
+        loginUser.setIsAdmin(puddingUserEntity.getIsAdmin());
+        if (!puddingUserEntity.getIsAdmin()) {
+            PuddingUserRoleEntity puddingUserRoleEntity = puddingUserRoleManager.getUserRoleByUserId(puddingUserEntity.getId());
+            loginUser.setRoleId(puddingUserRoleEntity.getRoleId());
         }
-
-        AdminLoginUser loginUser = new AdminLoginUser(puddingUserEntity.getId(),
-                puddingUserEntity.getUserName(),
-                puddingUserEntity.getPassword(),
-                puddingUserEntity.getPhoneNumber(),
-                puddingUserEntity.getAccount(),
-                puddingUserRoleEntity.getRoleId(),
-                grantedAuthorityList);
-
 
         return new UsernamePasswordAuthenticationToken(loginUser,
                 null,
-                grantedAuthorityList);
+                Collections.emptyList());
     }
 
     /**

@@ -16,6 +16,7 @@ public class PuddingUserConvert {
         puddingUserEntity.setPhoneNumber(puddingUserPO.getPhoneNumber());
         puddingUserEntity.setEmail(puddingUserPO.getEmail());
         puddingUserEntity.setStatus(puddingUserEntity.enable(puddingUserPO.getStatus()));
+        puddingUserEntity.setIsAdmin(puddingUserEntity.isAdmin(puddingUserPO.getIsAdmin()));
         return puddingUserEntity;
     }
 }

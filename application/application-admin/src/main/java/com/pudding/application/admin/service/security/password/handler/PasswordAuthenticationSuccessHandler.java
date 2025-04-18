@@ -48,6 +48,7 @@ public class PasswordAuthenticationSuccessHandler implements AuthenticationSucce
         claims.put(JwtConstants.CLIENT_IP, ipAddress);
         claims.put(JwtConstants.LOGIN_TYPE, LoginTypeConstants.PASSWORD);
         claims.put(JwtConstants.ROLE_ID,entity.getRoleId());
+        claims.put(JwtConstants.IS_ADMIN,entity.getIsAdmin());
         String accessToken = JwtTokenUtil.generateAccessToken(entity.getUserId().toString(), claims);
 
         String refreshToken = JwtTokenUtil.generateRefreshToken(entity.getUserId().toString(), claims);

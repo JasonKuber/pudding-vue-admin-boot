@@ -40,15 +40,30 @@ public class PuddingUserEntity {
      */
     private Boolean status;
 
+    /**
+     * 是否为admin
+     */
+    private Boolean isAdmin;
+
 
     /**
      * 判断是否开启
-     * @param status
+     * @param status 1=开启 2=关闭
      * @return
      */
     public Boolean enable(Integer status) {
 
         return status.equals(1);
+    }
+
+
+    /**
+     * 判断是否为Admin角色
+     * @param isAdmin 1=是 2=否
+     * @return
+     */
+    public Boolean isAdmin(Integer isAdmin) {
+        return isAdmin.equals(1);
     }
 
 
