@@ -6,8 +6,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Slf4j
+@EnableAspectJAutoProxy
 @ComponentScan(basePackages = {"com.pudding"})
 @MapperScan("com.pudding.repository.mapper")
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})

@@ -16,7 +16,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.sun.deploy.xml.XMLNode.WILDCARD;
 
 /**
  * 通过自定义注解@NotAuthentication，然后通过实现InitializingBean接口，
@@ -98,7 +97,7 @@ public class NotAuthenticationConfig implements InitializingBean, ApplicationCon
     private void addProcessedUrls(Set<String> paths) {
         permitAllUrls.addAll(
                 paths.stream()
-                        .map(path -> path.replaceAll(PATTERN, WILDCARD))
+                        .map(path -> path.replaceAll(PATTERN, ASTERISK))
                         .collect(Collectors.toList())
         );
     }
