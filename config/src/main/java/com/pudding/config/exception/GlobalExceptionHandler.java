@@ -1,8 +1,8 @@
 package com.pudding.config.exception;
 
-import com.pudding.common.vo.ApiResponse;
 import com.pudding.common.enums.ResultCodeEnum;
 import com.pudding.common.exception.BusinessException;
+import com.pudding.common.vo.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -138,5 +138,6 @@ public class GlobalExceptionHandler {
         log.error("[ 系统出现未知错误 ]",e);
         return ApiResponse.error("系统错误: {}",e.getMessage());
     }
+
 
 }

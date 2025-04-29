@@ -2,6 +2,7 @@ package com.pudding.common.vo;
 
 import com.pudding.common.enums.ResultCodeEnum;
 import com.pudding.common.exception.BaseErrorInfoInterface;
+import com.pudding.common.utils.I18nUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,7 +34,7 @@ public class ApiResponse <T> {
 
     public ApiResponse(BaseErrorInfoInterface baseErrorInfoInterface) {
         this.code = baseErrorInfoInterface.getResultCode();
-        this.errorMsg = baseErrorInfoInterface.getResultMsg();
+        this.errorMsg = baseErrorInfoInterface.getResultKey();
     }
 
     /**
@@ -57,7 +58,7 @@ public class ApiResponse <T> {
      * @param <T> 类型
      */
     public static <T>  ApiResponse<T> success(T data) {
-        return success(ResultCodeEnum.SUCCESS.getResultMsg(),data);
+        return success(I18nUtils.getMessage(ResultCodeEnum.SUCCESS.getResultKey()),data);
     }
 
     /**
@@ -90,7 +91,7 @@ public class ApiResponse <T> {
      * @param <T> 类型
      */
     public static <T> ApiResponse<T> error(ResultCodeEnum resultCodeEnum) {
-        return error(resultCodeEnum.getResultCode(),resultCodeEnum.getResultMsg());
+        return error(resultCodeEnum.getResultCode(),I18nUtils.getMessage(resultCodeEnum.getResultKey()));
     }
 
     /**
@@ -112,7 +113,7 @@ public class ApiResponse <T> {
      * @param <T> 类型
      */
     public static <T> ApiResponse<T> error() {
-        return error(ResultCodeEnum.SYS_ERROR.getResultMsg());
+        return error(I18nUtils.getMessage(ResultCodeEnum.SYS_ERROR.getResultKey()));
     }
 
 

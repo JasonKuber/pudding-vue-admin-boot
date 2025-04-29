@@ -31,6 +31,10 @@ spring:
     ansi:
       # 控制日志显示颜色
       enabled: always
+  messages:
+    # 指向 src/main/resources/i18n/messages.properties
+    basename: i18n/messages
+    encoding: UTF-8
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

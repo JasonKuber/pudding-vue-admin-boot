@@ -1,6 +1,7 @@
 package com.pudding.common.utils.http;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.Header;
 import com.pudding.common.constants.http.HeaderConstants;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +47,7 @@ public class HeaderUtils {
      * @return
      */
     public static String getUserAgent(HttpServletRequest request) {
-        return request.getHeader("User-Agent");
+        return request.getHeader(Header.USER_AGENT.getValue());
     }
 
 

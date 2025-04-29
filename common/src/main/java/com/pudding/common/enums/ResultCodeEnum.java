@@ -11,34 +11,34 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResultCodeEnum implements BaseErrorInfoInterface {
 
-    SUCCESS("200","成功!"),
+    SUCCESS("200","response.SUCCESS"),
 
-    NOT_LOGIN("401","请先登录"),
-    TOKEN_INVALID("401","Token无效"),
-    TOKEN_IP_NO_MATCH("401","Token与IP不匹配"),
-
-
-
-    VALIDATE_ERROR("400","参数校验错误!" ),
-    INVALID_REQUEST_BODY("400", "请求数据格式有误，请检查后再试"),
-    PATH_VARIABLE_ERROR("400", "URL中的参数类型错误"),
-    REQUEST_PARAM_REQUIRED_ERROR("400","请求缺少必要参数"),
-    ACCOUNT_OR_PASSWORD_ERROR("400","账号或密码错误"),
-    USER_INFO_ERROR("400","用户不存在"),
+    NOT_LOGIN("401","response.NOT_LOGIN"),
+    TOKEN_INVALID("401","response.TOKEN_INVALID"),
+    TOKEN_IP_NO_MATCH("401","response.TOKEN_IP_NO_MATCH"),
 
 
 
-    LIMITED_ACCESS("403","访问权限受限"),
-    ACCOUNT_DISABLED("403","账号已被禁用"),
+    VALIDATE_ERROR("400","response.VALIDATE_ERROR" ),
+    INVALID_REQUEST_BODY("400", "response.INVALID_REQUEST_BODY"),
+    PATH_VARIABLE_ERROR("400", "response.PATH_VARIABLE_ERROR"),
+    REQUEST_PARAM_REQUIRED_ERROR("400","response.REQUEST_PARAM_REQUIRED_ERROR"),
+    ACCOUNT_OR_PASSWORD_ERROR("400","response.ACCOUNT_OR_PASSWORD_ERROR"),
+    USER_INFO_ERROR("400","response.USER_INFO_ERROR"),
 
 
-    HTTP_METHOD_ERROR("405","请求类型错误!"),
 
-    SYS_ERROR("500","服务器内部错误!"),
-    DATABASE_ERROR("500","数据库异常"),
+    LIMITED_ACCESS("403","response.LIMITED_ACCESS"),
+    ACCOUNT_DISABLED("403","response.ACCOUNT_DISABLED"),
 
 
-    SQL_CONSTRAINT_ERROR("501", "唯一索引冲突"),
+    HTTP_METHOD_ERROR("405","response.HTTP_METHOD_ERROR"),
+
+    SYS_ERROR("500","response.SYS_ERROR"),
+    DATABASE_ERROR("500","response.DATABASE_ERROR"),
+
+
+    SQL_CONSTRAINT_ERROR("501", "response.SQL_CONSTRAINT_ERROR"),
     ;
 
 
@@ -50,7 +50,7 @@ public enum ResultCodeEnum implements BaseErrorInfoInterface {
     /**
      * 响应消息
      */
-    private String resultMsg;
+    private String resultKey;
 
     @Override
     public String getResultCode() {
@@ -58,8 +58,8 @@ public enum ResultCodeEnum implements BaseErrorInfoInterface {
     }
 
     @Override
-    public String getResultMsg() {
-        return resultMsg;
+    public String getResultKey() {
+        return resultKey;
     }
 
 

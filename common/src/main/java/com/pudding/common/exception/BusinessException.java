@@ -1,5 +1,6 @@
 package com.pudding.common.exception;
 
+import com.pudding.common.utils.I18nUtils;
 import lombok.Data;
 
 /**
@@ -27,9 +28,9 @@ public class BusinessException extends RuntimeException{
     }
 
     public BusinessException(BaseErrorInfoInterface baseErrorInfoInterface) {
-        super(baseErrorInfoInterface.getResultMsg());
+        super(I18nUtils.getMessage(baseErrorInfoInterface.getResultKey()));
         this.errorCode = baseErrorInfoInterface.getResultCode();
-        this.errorMsg = baseErrorInfoInterface.getResultMsg();
+        this.errorMsg = I18nUtils.getMessage(baseErrorInfoInterface.getResultKey());
     }
 
     public BusinessException(String errorMsg) {
