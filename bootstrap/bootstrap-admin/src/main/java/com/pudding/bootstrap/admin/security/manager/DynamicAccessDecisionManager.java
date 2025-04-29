@@ -4,6 +4,7 @@ import com.pudding.application.admin.service.security.PermissionGrantedAuthority
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 
@@ -19,7 +20,8 @@ public class DynamicAccessDecisionManager implements AccessDecisionManager {
                        Collection<ConfigAttribute> configAttributes)
             throws AccessDeniedException, InsufficientAuthenticationException {
 
-        if (configAttributes == null || configAttributes.isEmpty()) return;
+        if (configAttributes == null || configAttributes.isEmpty() || authentication instanceof AnonymousAuthenticationToken) return;
+
 
         // 获取当前用户拥有的权限
         Collection<PermissionGrantedAuthority> authorities = (Collection<PermissionGrantedAuthority>) authentication.getAuthorities();
