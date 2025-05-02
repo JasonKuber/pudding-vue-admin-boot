@@ -83,4 +83,11 @@ public class HashOperationsImpl<HK,HV> implements HashOperations<HK,HV> {
         log.debug("hValues(...) => entryValues -> {}", entryValues);
         return entryValues;
     }
+
+    @Override
+    public boolean hPutIfAbsent(String key, HK entryKey, HV entryValue) {
+        log.debug("hPutIfAbsent(...) => key -> {}, entryKey -> {}, entryValue -> {}",
+                key, entryKey, entryValue);
+        return redisTemplate.opsForHash().putIfAbsent(key, entryKey, entryValue);
+    }
 }

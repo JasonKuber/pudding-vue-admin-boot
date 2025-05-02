@@ -1,4 +1,4 @@
-package com.pudding.bootstrap.admin.security.filter;
+package com.pudding.application.admin.service.security;
 
 import com.pudding.domain.model.entity.PuddingApiPermissionEntity;
 import com.pudding.manager.permission.PuddingApiPermissionManager;
@@ -24,13 +24,22 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
-    private static Map<RequestMatcher,Collection<ConfigAttribute>> permissionMap = new ConcurrentHashMap<>();
+    private final Map<RequestMatcher,Collection<ConfigAttribute>> permissionMap = new ConcurrentHashMap<>();
 
     @Resource
     private PuddingApiPermissionManager puddingApiPermissionManager;
 
     @PostConstruct
     public void init() {
+        this.loadPermissions();
+    }
+
+    public void refresh() {
+        this.permissionMap.clear();
+        this.loadPermissions();
+    }
+
+    private void loadPermissions() {
         log.info("[ Admin API Permission 初始化开始 ]");
         List<PuddingApiPermissionEntity> permissionEntityList = puddingApiPermissionManager.allPermission();
         for (PuddingApiPermissionEntity permission : permissionEntityList) {

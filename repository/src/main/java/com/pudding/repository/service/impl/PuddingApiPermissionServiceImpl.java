@@ -1,5 +1,6 @@
 package com.pudding.repository.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pudding.repository.mapper.PuddingApiPermissionMapper;
 import com.pudding.repository.po.PuddingApiPermissionPO;
@@ -20,6 +21,20 @@ public class PuddingApiPermissionServiceImpl extends ServiceImpl<PuddingApiPermi
     @Override
     public List<PuddingApiPermissionPO> listPermission() {
         return list();
+    }
+
+    @Override
+    public Long countApiPermissionByPermCode(String permCode) {
+        LambdaQueryWrapper<PuddingApiPermissionPO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PuddingApiPermissionPO::getPermCode,permCode);
+        return count(wrapper);
+    }
+
+    @Override
+    public Long countApiPermissionByPermApi(String permApi) {
+        LambdaQueryWrapper<PuddingApiPermissionPO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PuddingApiPermissionPO::getPermApi,permApi);
+        return count(wrapper);
     }
 }
 

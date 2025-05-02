@@ -14,4 +14,7 @@ public interface PuddingApiPermissionService extends IService<PuddingApiPermissi
 
     List<PuddingApiPermissionPO> listPermission();
 
+    Long countApiPermissionByPermCode(String permCode);
+
+    Long countApiPermissionByPermApi(String permApi);
 }

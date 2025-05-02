@@ -50,4 +50,16 @@ public class PuddingApiPermissionPO extends BaseEntity {
     @TableField(value = "is_deleted")
     private Integer isDeleted;
 
+    /**
+     * 创建者id
+     */
+    @TableField(value = "create_by")
+    private Long createBy;
+
+    /**
+     * 更新者id
+     */
+    @TableField(value = "update_by")
+    private Long updateBy;
+
 }

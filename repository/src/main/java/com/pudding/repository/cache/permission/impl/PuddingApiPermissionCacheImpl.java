@@ -36,4 +36,9 @@ public class PuddingApiPermissionCacheImpl implements PuddingApiPermissionCache 
     public List<PuddingApiPermissionPO> getCachePermissionByIdList(List<Long> permIdList) {
         return hashOperations.hMultiGet(ALL_PERMISSION,permIdList.stream().map(String::valueOf).collect(Collectors.toList()));
     }
+
+    @Override
+    public void cacheApiPermission(PuddingApiPermissionPO puddingApiPermissionPO) {
+        hashOperations.hPutIfAbsent(ALL_PERMISSION,puddingApiPermissionPO.getId().toString(),puddingApiPermissionPO);
+    }
 }

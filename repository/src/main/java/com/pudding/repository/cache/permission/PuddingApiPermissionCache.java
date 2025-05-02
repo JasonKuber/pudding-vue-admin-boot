@@ -10,4 +10,6 @@ public interface PuddingApiPermissionCache {
     void cacheAllPermission(List<PuddingApiPermissionPO> apiPermissionPOList);
 
     List<PuddingApiPermissionPO> getCachePermissionByIdList(List<Long> permIdList);
+
+    void cacheApiPermission(PuddingApiPermissionPO puddingApiPermissionPO);
 }

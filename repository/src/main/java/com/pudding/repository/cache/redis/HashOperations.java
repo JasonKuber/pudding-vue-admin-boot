@@ -143,5 +143,20 @@ public interface HashOperations<HK,HV> {
      */
     List<HV> hValues(String key);
 
+    /**
+     * 当key对应的hash中,不存在entryKey时，才(向key对应的hash中，)增加entryKey-entryValue
+     * 否者，不进行任何操作
+     *
+     * @param key
+     *            定位hash的key
+     * @param entryKey
+     *            要向hash中增加的键值对里的 键
+     * @param entryValue
+     *            要向hash中增加的键值对里的 值
+     *
+     * @return 操作是否成功。
+     */
+    boolean hPutIfAbsent(String key, HK entryKey, HV entryValue);
+
 
 }

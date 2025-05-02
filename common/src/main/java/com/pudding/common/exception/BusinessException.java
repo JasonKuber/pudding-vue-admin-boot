@@ -33,6 +33,13 @@ public class BusinessException extends RuntimeException{
         this.errorMsg = I18nUtils.getMessage(baseErrorInfoInterface.getResultKey());
     }
 
+    public BusinessException(BaseErrorInfoInterface baseErrorInfoInterface,Object...args) {
+        super(I18nUtils.getMessage(baseErrorInfoInterface.getResultKey(),args));
+        this.errorCode = baseErrorInfoInterface.getResultCode();
+        this.errorMsg = I18nUtils.getMessage(baseErrorInfoInterface.getResultKey(),args);
+
+    }
+
     public BusinessException(String errorMsg) {
         super(errorMsg);
         this.errorCode = "500";

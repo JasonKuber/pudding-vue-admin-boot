@@ -5,6 +5,7 @@ import com.pudding.common.exception.BusinessException;
 import com.pudding.common.vo.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -33,7 +34,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ApiResponse<String> businessException(BusinessException e) {
         log.error("[ 发生业务异常 ]",e);
-        return ApiResponse.error(e.getErrorCode(),e.getMessage());
+        return ApiResponse.error(e.getErrorCode(),e.getErrorMsg());
     }
 
     /**
@@ -105,13 +106,14 @@ public class GlobalExceptionHandler {
         return ApiResponse.error(ResultCodeEnum.VALIDATE_ERROR.getResultCode(),e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
     }
 
+
     /**
      * 唯一索引冲突异常处理
      * @param e
      * @return
      */
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ApiResponse<String> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e) {
+    @ExceptionHandler(DuplicateKeyException.class)
+    public ApiResponse<String> handleDuplicateKeyException(SQLIntegrityConstraintViolationException e) {
         log.error("[ 唯一索引冲突 ]",e);
         return ApiResponse.error(ResultCodeEnum.SQL_CONSTRAINT_ERROR);
     }

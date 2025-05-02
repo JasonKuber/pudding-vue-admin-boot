@@ -32,5 +32,15 @@ public class PuddingApiPermissionEntity {
      */
     private String method;
 
+    /**
+     * 创建者id
+     */
+    private Long createBy;
+
+    /**
+     * 更新者id
+     */
+    private Long updateBy;
+
 
 }

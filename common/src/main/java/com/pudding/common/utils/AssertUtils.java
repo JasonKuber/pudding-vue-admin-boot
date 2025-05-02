@@ -29,6 +29,18 @@ public class AssertUtils {
     }
 
     /**
+     * 判断是否为False
+     * @param valid 判断结果 true抛出异常
+     * @param resultCode 返回结果
+     * @param args 国际化参数配置
+     */
+    public static void isFalse(Boolean valid, ResultCodeEnum resultCode,Object...args){
+        if (valid){
+            throw  new BusinessException(resultCode,args);
+        }
+    }
+
+    /**
      * 判断是否为True
      * @param valid 判断结果 false抛出异常
      * @param resultCode 返回结果
@@ -36,6 +48,18 @@ public class AssertUtils {
     public static void isTrue(Boolean valid, ResultCodeEnum resultCode){
         if (!valid){
             throw  new BusinessException(resultCode);
+        }
+    }
+
+    /**
+     * 判断是否为True
+     * @param valid 判断结果 false抛出异常
+     * @param resultCode 返回结果
+     * @param args 国际化参数配置
+     */
+    public static void isTrue(Boolean valid, ResultCodeEnum resultCode,Object...args){
+        if (!valid){
+            throw  new BusinessException(resultCode,args);
         }
     }
     /**

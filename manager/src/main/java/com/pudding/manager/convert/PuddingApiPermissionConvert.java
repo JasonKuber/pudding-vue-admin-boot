@@ -1,6 +1,5 @@
 package com.pudding.manager.convert;
 
-
 import com.pudding.domain.model.entity.PuddingApiPermissionEntity;
 import com.pudding.repository.po.PuddingApiPermissionPO;
 
@@ -21,5 +20,19 @@ public class PuddingApiPermissionConvert {
             apiPermissionEntityList.add(entity);
         }
         return apiPermissionEntityList;
+    }
+
+    public static PuddingApiPermissionPO toPO(PuddingApiPermissionEntity puddingApiPermissionEntity) {
+        PuddingApiPermissionPO po = new PuddingApiPermissionPO();
+        po.setPermName(puddingApiPermissionEntity.getPermName());
+        po.setPermCode(puddingApiPermissionEntity.getPermCode());
+        po.setDescription(puddingApiPermissionEntity.getDescription());
+        po.setPermApi(puddingApiPermissionEntity.getPermApi());
+        po.setMethod(puddingApiPermissionEntity.getMethod());
+        po.setIsDeleted(2);
+        po.setCreateBy(0L);
+        po.setUpdateBy(0L);
+        po.setId(0L);
+        return po;
     }
 }
