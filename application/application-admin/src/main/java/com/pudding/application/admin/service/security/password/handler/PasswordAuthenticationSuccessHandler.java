@@ -47,7 +47,9 @@ public class PasswordAuthenticationSuccessHandler implements AuthenticationSucce
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtConstants.CLIENT_IP, ipAddress);
         claims.put(JwtConstants.LOGIN_TYPE, LoginTypeConstants.PASSWORD);
-        claims.put(JwtConstants.ROLE_ID,entity.getRoleId());
+        if (!entity.getIsAdmin()) {
+            claims.put(JwtConstants.ROLE_ID, entity.getRoleId());
+        }
         claims.put(JwtConstants.IS_ADMIN,entity.getIsAdmin());
         String accessToken = JwtTokenUtil.generateAccessToken(entity.getUserId().toString(), claims);
 

@@ -25,6 +25,8 @@ public enum ResultCodeEnum implements BaseErrorInfoInterface {
     REQUEST_PARAM_REQUIRED_ERROR("400","response.REQUEST_PARAM_REQUIRED_ERROR"),
     ACCOUNT_OR_PASSWORD_ERROR("400","response.ACCOUNT_OR_PASSWORD_ERROR"),
     USER_INFO_ERROR("400","response.USER_INFO_ERROR"),
+    PARAMETERS_EXISTS("400","response.PARAMETERS_EXISTS"),
+
 
 
 

@@ -40,6 +40,7 @@ public class PasswordAuthenticationProvider implements AuthenticationProvider {
 
         // 账号
         String identifier = (String) authentication.getPrincipal();
+
         // 密码
         String password = (String) authentication.getCredentials();
 

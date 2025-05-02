@@ -1,5 +1,6 @@
 package com.pudding.api.admin.security.password.filter;
 
+import cn.hutool.core.util.StrUtil;
 import com.pudding.application.admin.service.security.password.token.PasswordAuthenticationToken;
 import com.pudding.common.utils.AssertUtils;
 import org.springframework.security.core.Authentication;
@@ -35,6 +36,7 @@ public class PasswordAuthenticationLoginFilter extends AbstractAuthenticationPro
 
 
         String identifier = request.getParameter(REQUEST_PARAM_IDENTIFIER);
+
         identifier = identifier.trim();
         String password = request.getParameter(REQUEST_PARAM_PASSWORD);
         // 封装到token中提交
@@ -49,6 +51,12 @@ public class PasswordAuthenticationLoginFilter extends AbstractAuthenticationPro
         authenticationToken.setDetails(this.authenticationDetailsSource.buildDetails(request));
     }
 
+    private void checkIdentifier(String identifier) {
+        if (StrUtil.isNotBlank(identifier)) {
+
+        }
+
+    }
 
 
 
