@@ -53,13 +53,25 @@ public class PuddingApiPermissionPO extends BaseEntity {
     /**
      * 创建者id
      */
-    @TableField(value = "create_by")
-    private Long createBy;
+    @TableField(value = "create_id")
+    private Long createId;
+
+    /**
+     * 创建者账号
+     */
+    @TableField(value = "create_account")
+    private String createAccount;
 
     /**
      * 更新者id
      */
-    @TableField(value = "update_by")
-    private Long updateBy;
+    @TableField(value = "update_id")
+    private Long updateId;
+
+    /**
+     * 更新者账号
+     */
+    @TableField(value = "update_account")
+    private String updateAccount;
 
 }

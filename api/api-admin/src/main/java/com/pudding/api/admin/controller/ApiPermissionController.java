@@ -3,10 +3,14 @@ package com.pudding.api.admin.controller;
 import com.pudding.api.admin.controller.base.BaseController;
 import com.pudding.application.admin.service.api.ApiPermissionAppService;
 import com.pudding.application.admin.service.security.DynamicSecurityMetadataSource;
+import com.pudding.common.vo.PageResult;
 import com.pudding.domain.model.dto.api.AddApiPermissionDTO;
+import com.pudding.domain.model.dto.api.PageApiPermissionListDTO;
+import com.pudding.domain.model.vo.api.PageApiPermissionListVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,8 +27,8 @@ public class ApiPermissionController extends BaseController {
 
     @GetMapping
     @ApiOperation("API接口权限列表")
-    public void getApiPermissionList() {
-
+    public PageResult<PageApiPermissionListVO> pageApiPermissionList(@Validated PageApiPermissionListDTO pageApiPermissionListDTO) {
+        return apiPermissionAppService.pageApiPermissionList(pageApiPermissionListDTO);
     }
 
     @PostMapping

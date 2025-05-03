@@ -6,7 +6,7 @@ import com.pudding.application.admin.service.security.handler.AdminLogoutSuccess
 import com.pudding.application.admin.service.security.handler.LoginAuthenticationFailureHandler;
 import com.pudding.application.admin.service.security.password.handler.PasswordAuthenticationSuccessHandler;
 import com.pudding.application.admin.service.security.password.provider.PasswordAuthenticationProvider;
-import com.pudding.bootstrap.admin.security.filter.DynamicSecurityMetadataSource;
+import com.pudding.application.admin.service.security.DynamicSecurityMetadataSource;
 import com.pudding.bootstrap.admin.security.filter.TokenAuthenticationFilter;
 import com.pudding.bootstrap.admin.security.handler.EntryPointUnauthorizedHandler;
 import com.pudding.bootstrap.admin.security.handler.RequestAccessDeniedHandler;

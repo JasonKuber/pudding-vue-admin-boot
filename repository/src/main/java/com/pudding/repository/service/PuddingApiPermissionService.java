@@ -1,5 +1,6 @@
 package com.pudding.repository.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pudding.repository.po.PuddingApiPermissionPO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -17,4 +18,7 @@ public interface PuddingApiPermissionService extends IService<PuddingApiPermissi
     Long countApiPermissionByPermCode(String permCode);
 
     Long countApiPermissionByPermApi(String permApi);
+
+    Page<PuddingApiPermissionPO> pageApiPermissionList(PuddingApiPermissionPO puddingApiPermissionPO,Integer pageNo,Integer pageSize);
+
 }

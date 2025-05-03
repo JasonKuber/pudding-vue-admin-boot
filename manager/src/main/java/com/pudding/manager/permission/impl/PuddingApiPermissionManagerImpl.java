@@ -1,9 +1,13 @@
 package com.pudding.manager.permission.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pudding.common.enums.ResultCodeEnum;
 import com.pudding.common.security.AdminLoginUser;
 import com.pudding.common.utils.AssertUtils;
+import com.pudding.common.vo.PageResult;
+import com.pudding.domain.model.dto.api.AddApiPermissionDTO;
+import com.pudding.domain.model.dto.api.PageApiPermissionListDTO;
 import com.pudding.domain.model.entity.PuddingApiPermissionEntity;
 import com.pudding.manager.convert.PuddingApiPermissionConvert;
 import com.pudding.manager.permission.PuddingApiPermissionManager;
@@ -61,18 +65,28 @@ public class PuddingApiPermissionManagerImpl implements PuddingApiPermissionMana
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void addApiPermission(AdminLoginUser loginUser, PuddingApiPermissionEntity puddingApiPermissionEntity) {
-        Long countPermCode = puddingApiPermissionService.countApiPermissionByPermCode(puddingApiPermissionEntity.getPermCode());
-        AssertUtils.isFalse(countPermCode > 0L, ResultCodeEnum.PARAMETERS_EXISTS,puddingApiPermissionEntity.getPermCode());
+    public void addApiPermission(AdminLoginUser loginUser, AddApiPermissionDTO addApiPermissionDTO) {
+        Long countPermCode = puddingApiPermissionService.countApiPermissionByPermCode(addApiPermissionDTO.getPermCode());
+        AssertUtils.isFalse(countPermCode > 0L, ResultCodeEnum.PARAMETERS_EXISTS,addApiPermissionDTO.getPermCode());
 
-        Long countPermApi = puddingApiPermissionService.countApiPermissionByPermApi(puddingApiPermissionEntity.getPermApi());
-        AssertUtils.isFalse(countPermApi > 0L, ResultCodeEnum.PARAMETERS_EXISTS,puddingApiPermissionEntity.getPermApi());
+        Long countPermApi = puddingApiPermissionService.countApiPermissionByPermApi(addApiPermissionDTO.getPermApi());
+        AssertUtils.isFalse(countPermApi > 0L, ResultCodeEnum.PARAMETERS_EXISTS,addApiPermissionDTO.getPermApi());
 
-        PuddingApiPermissionPO puddingApiPermissionPO = PuddingApiPermissionConvert.toPO(puddingApiPermissionEntity);
-        puddingApiPermissionPO.setCreateBy(loginUser.getUserId());
-        puddingApiPermissionPO.setUpdateBy(loginUser.getUserId());
+        PuddingApiPermissionPO puddingApiPermissionPO = PuddingApiPermissionConvert.toPO(addApiPermissionDTO);
+        puddingApiPermissionPO.setCreateId(loginUser.getUserId());
+        puddingApiPermissionPO.setCreateAccount(loginUser.getAccount());
+        puddingApiPermissionPO.setUpdateId(loginUser.getUserId());
+        puddingApiPermissionPO.setUpdateAccount(loginUser.getAccount());
         puddingApiPermissionService.save(puddingApiPermissionPO);
 
         puddingApiPermissionCache.cacheApiPermission(puddingApiPermissionPO);
+    }
+
+    @Override
+    public PageResult<PuddingApiPermissionEntity> pageApiPermissionList(PageApiPermissionListDTO pageApiPermissionListDTO) {
+        PuddingApiPermissionPO puddingApiPermissionPO = PuddingApiPermissionConvert.toPO(pageApiPermissionListDTO);
+        Page<PuddingApiPermissionPO> apiPermissionPOPage = puddingApiPermissionService.pageApiPermissionList(puddingApiPermissionPO,pageApiPermissionListDTO.getPageNo(),pageApiPermissionListDTO.getPageSize());
+        List<PuddingApiPermissionEntity> apiPermissionEntityList = PuddingApiPermissionConvert.toEntityList(apiPermissionPOPage.getRecords());
+        return PageResult.of(apiPermissionEntityList,apiPermissionPOPage.getTotal(),apiPermissionPOPage.getCurrent(),apiPermissionPOPage.getSize());
     }
 }

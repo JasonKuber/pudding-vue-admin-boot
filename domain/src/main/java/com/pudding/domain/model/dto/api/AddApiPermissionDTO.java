@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
@@ -48,6 +49,7 @@ public class AddApiPermissionDTO {
      */
     @NotBlank(message = "{validation.api.permission.method.notBlank}")
     @Size(min = 1,max = 200,message = "{validation.api.permission.method.size}")
+    @Pattern(regexp = "^(GET|POST|PUT|DELETE)$",message = "{validation.api.permission.method.pattern}")
     @ApiModelProperty(value = "请求方式",example = "GET POST PUT DELETE",required = true)
     private String method;
 
