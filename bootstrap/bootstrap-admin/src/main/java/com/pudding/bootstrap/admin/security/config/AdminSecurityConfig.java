@@ -1,12 +1,12 @@
 package com.pudding.bootstrap.admin.security.config;
 
 import com.pudding.api.admin.security.password.filter.PasswordAuthenticationLoginFilter;
+import com.pudding.application.admin.service.security.DynamicSecurityMetadataSource;
 import com.pudding.application.admin.service.security.handler.AdminLogoutHandler;
 import com.pudding.application.admin.service.security.handler.AdminLogoutSuccessHandler;
 import com.pudding.application.admin.service.security.handler.LoginAuthenticationFailureHandler;
 import com.pudding.application.admin.service.security.password.handler.PasswordAuthenticationSuccessHandler;
 import com.pudding.application.admin.service.security.password.provider.PasswordAuthenticationProvider;
-import com.pudding.application.admin.service.security.DynamicSecurityMetadataSource;
 import com.pudding.bootstrap.admin.security.filter.TokenAuthenticationFilter;
 import com.pudding.bootstrap.admin.security.handler.EntryPointUnauthorizedHandler;
 import com.pudding.bootstrap.admin.security.handler.RequestAccessDeniedHandler;
@@ -68,6 +68,7 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
      * 动态权限元数据源
      */
     private final DynamicSecurityMetadataSource dynamicSecurityMetadataSource;
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -145,18 +146,6 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-//    /**
-//     * 获取AuthenticationManager
-//     *
-//     * @param configuration
-//     * @return
-//     * @throws Exception
-//     */
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-//        return configuration.getAuthenticationManager();
-//    }
-
     @Bean
     public AuthenticationManager authenticationManagerBean() {
         return new ProviderManager(Arrays.asList(
@@ -165,7 +154,7 @@ public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * 自定义的Jwt Token校验过滤器
+     * 自定义请求过滤器
      * @return
      */
     @Bean
