@@ -21,4 +21,7 @@ public interface PuddingApiPermissionService extends IService<PuddingApiPermissi
 
     Page<PuddingApiPermissionPO> pageApiPermissionList(PuddingApiPermissionPO puddingApiPermissionPO,Integer pageNo,Integer pageSize);
 
+    Boolean updateApiPermissionById(Long id, PuddingApiPermissionPO po);
+
+    Boolean deleteApiPermissionById(Long userId, String account, Long id);
 }

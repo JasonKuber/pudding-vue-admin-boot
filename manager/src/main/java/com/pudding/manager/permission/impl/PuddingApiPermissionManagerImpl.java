@@ -8,6 +8,7 @@ import com.pudding.common.utils.AssertUtils;
 import com.pudding.common.vo.PageResult;
 import com.pudding.domain.model.dto.api.AddApiPermissionDTO;
 import com.pudding.domain.model.dto.api.PageApiPermissionListDTO;
+import com.pudding.domain.model.dto.api.UpdateApiPermissionDTO;
 import com.pudding.domain.model.entity.PuddingApiPermissionEntity;
 import com.pudding.manager.convert.PuddingApiPermissionConvert;
 import com.pudding.manager.permission.PuddingApiPermissionManager;
@@ -88,5 +89,23 @@ public class PuddingApiPermissionManagerImpl implements PuddingApiPermissionMana
         Page<PuddingApiPermissionPO> apiPermissionPOPage = puddingApiPermissionService.pageApiPermissionList(puddingApiPermissionPO,pageApiPermissionListDTO.getPageNo(),pageApiPermissionListDTO.getPageSize());
         List<PuddingApiPermissionEntity> apiPermissionEntityList = PuddingApiPermissionConvert.toEntityList(apiPermissionPOPage.getRecords());
         return PageResult.of(apiPermissionEntityList,apiPermissionPOPage.getTotal(),apiPermissionPOPage.getCurrent(),apiPermissionPOPage.getSize());
+    }
+
+    @Override
+    public void updateApiPermission(AdminLoginUser loginUser,
+                                    Long apiPermissionId,
+                                    UpdateApiPermissionDTO updateApiPermissionDTO) {
+
+        PuddingApiPermissionPO po = PuddingApiPermissionConvert.toPO(loginUser, updateApiPermissionDTO);
+        Boolean updatedApiPermissionById = puddingApiPermissionService.updateApiPermissionById(apiPermissionId, po);
+        AssertUtils.isTrue(updatedApiPermissionById,ResultCodeEnum.UPDATE_FAILED);
+
+
+    }
+
+    @Override
+    public void deleteApiPermission(AdminLoginUser loginUser, Long apiPermissionId) {
+        Boolean deleteApiPermissionById = puddingApiPermissionService.deleteApiPermissionById(loginUser.getUserId(),loginUser.getAccount(),apiPermissionId);
+        AssertUtils.isTrue(deleteApiPermissionById,ResultCodeEnum.DELETE_FAILED);
     }
 }

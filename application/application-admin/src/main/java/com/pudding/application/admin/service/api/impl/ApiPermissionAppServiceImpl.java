@@ -6,6 +6,7 @@ import com.pudding.common.vo.PageResult;
 import com.pudding.domain.model.convert.PuddingApiPermissionEntityConvert;
 import com.pudding.domain.model.dto.api.AddApiPermissionDTO;
 import com.pudding.domain.model.dto.api.PageApiPermissionListDTO;
+import com.pudding.domain.model.dto.api.UpdateApiPermissionDTO;
 import com.pudding.domain.model.entity.PuddingApiPermissionEntity;
 import com.pudding.domain.model.vo.api.PageApiPermissionListVO;
 import com.pudding.manager.permission.PuddingApiPermissionManager;
@@ -32,5 +33,19 @@ public class ApiPermissionAppServiceImpl implements ApiPermissionAppService {
         PageResult<PuddingApiPermissionEntity> pageResultEntity = apiPermissionManager.pageApiPermissionList(pageApiPermissionListDTO);
         List<PageApiPermissionListVO> pageApiPermissionListVOList = PuddingApiPermissionEntityConvert.toVOList(pageResultEntity.getRecordList());
         return PageResult.of(pageApiPermissionListVOList,pageResultEntity.getTotal(),pageResultEntity.getCurrent(),pageResultEntity.getSize());
+    }
+
+    @Override
+    public void updateApiPermission(AdminLoginUser loginUser,
+                                    Long apiPermissionId,
+                                    UpdateApiPermissionDTO updateApiPermissionDTO) {
+
+        apiPermissionManager.updateApiPermission(loginUser,apiPermissionId,updateApiPermissionDTO);
+
+    }
+
+    @Override
+    public void deleteApiPermission(AdminLoginUser loginUser,Long apiPermissionId) {
+        apiPermissionManager.deleteApiPermission(loginUser,apiPermissionId);
     }
 }

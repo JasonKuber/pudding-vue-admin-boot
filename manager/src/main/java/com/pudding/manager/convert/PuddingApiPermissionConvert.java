@@ -1,7 +1,9 @@
 package com.pudding.manager.convert;
 
+import com.pudding.common.security.AdminLoginUser;
 import com.pudding.domain.model.dto.api.AddApiPermissionDTO;
 import com.pudding.domain.model.dto.api.PageApiPermissionListDTO;
+import com.pudding.domain.model.dto.api.UpdateApiPermissionDTO;
 import com.pudding.domain.model.entity.PuddingApiPermissionEntity;
 import com.pudding.domain.model.vo.api.PageApiPermissionListVO;
 import com.pudding.repository.po.PuddingApiPermissionPO;
@@ -48,6 +50,17 @@ public class PuddingApiPermissionConvert {
         po.setPermCode(pageApiPermissionListDTO.getPermCode());
         po.setPermApi(pageApiPermissionListDTO.getPermApi());
         po.setMethod(pageApiPermissionListDTO.getMethod());
+        return po;
+    }
+
+    public static PuddingApiPermissionPO toPO(AdminLoginUser loginUser, UpdateApiPermissionDTO updateApiPermissionDTO) {
+        PuddingApiPermissionPO po = new PuddingApiPermissionPO();
+        po.setPermName(updateApiPermissionDTO.getPermName());
+        po.setPermCode(updateApiPermissionDTO.getPermCode());
+        po.setPermApi(updateApiPermissionDTO.getPermApi());
+        po.setMethod(updateApiPermissionDTO.getMethod());
+        po.setUpdateId(loginUser.getUserId());
+        po.setUpdateAccount(loginUser.getAccount());
         return po;
     }
 

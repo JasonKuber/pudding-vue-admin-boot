@@ -4,6 +4,7 @@ import com.pudding.common.security.AdminLoginUser;
 import com.pudding.common.vo.PageResult;
 import com.pudding.domain.model.dto.api.AddApiPermissionDTO;
 import com.pudding.domain.model.dto.api.PageApiPermissionListDTO;
+import com.pudding.domain.model.dto.api.UpdateApiPermissionDTO;
 import com.pudding.domain.model.entity.PuddingApiPermissionEntity;
 
 import java.util.List;
@@ -16,4 +17,8 @@ public interface PuddingApiPermissionManager {
     void addApiPermission(AdminLoginUser loginUser, AddApiPermissionDTO addApiPermissionDTO);
 
     PageResult<PuddingApiPermissionEntity> pageApiPermissionList(PageApiPermissionListDTO entity);
+
+    void updateApiPermission(AdminLoginUser loginUser, Long apiPermissionId, UpdateApiPermissionDTO updateApiPermissionDTO);
+
+    void deleteApiPermission(AdminLoginUser loginUser, Long apiPermissionId);
 }

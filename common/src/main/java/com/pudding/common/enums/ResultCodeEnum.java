@@ -26,6 +26,8 @@ public enum ResultCodeEnum implements BaseErrorInfoInterface {
     ACCOUNT_OR_PASSWORD_ERROR("400","response.ACCOUNT_OR_PASSWORD_ERROR"),
     USER_INFO_ERROR("400","response.USER_INFO_ERROR"),
     PARAMETERS_EXISTS("400","response.PARAMETERS_EXISTS"),
+    UPDATE_FAILED("400","response.UPDATE_FAILED"),
+    DELETE_FAILED("400","response.DELETE_FAILED"),
 
 
 
@@ -62,6 +64,15 @@ public enum ResultCodeEnum implements BaseErrorInfoInterface {
     @Override
     public String getResultKey() {
         return resultKey;
+    }
+
+    public static ResultCodeEnum getResultCodeEnumByResultKey(String resultKey) {
+        for (ResultCodeEnum value : values()) {
+            if (value.getResultKey().equals(resultKey)) {
+                return value;
+            }
+        }
+        return SYS_ERROR;
     }
 
 

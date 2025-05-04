@@ -50,7 +50,7 @@ public class AddApiPermissionDTO {
     @NotBlank(message = "{validation.api.permission.method.notBlank}")
     @Size(min = 1,max = 200,message = "{validation.api.permission.method.size}")
     @Pattern(regexp = "^(GET|POST|PUT|DELETE)$",message = "{validation.api.permission.method.pattern}")
-    @ApiModelProperty(value = "请求方式",example = "GET POST PUT DELETE",required = true)
+    @ApiModelProperty(value = "请求方式",example = "GET",required = true)
     private String method;
 
 

@@ -6,8 +6,11 @@ import com.pudding.application.admin.service.security.DynamicSecurityMetadataSou
 import com.pudding.common.vo.PageResult;
 import com.pudding.domain.model.dto.api.AddApiPermissionDTO;
 import com.pudding.domain.model.dto.api.PageApiPermissionListDTO;
+import com.pudding.domain.model.dto.api.UpdateApiPermissionDTO;
 import com.pudding.domain.model.vo.api.PageApiPermissionListVO;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -43,16 +46,23 @@ public class ApiPermissionController extends BaseController {
         dynamicSecurityMetadataSource.refresh();
     }
 
-    @PutMapping
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "apiPermissionId",value = "API接口权限Id",required = true)
+    })
+    @PutMapping("/{apiPermissionId}")
     @ApiOperation("修改API接口权限")
-    public void updateApiPermission() {
-
+    public void updateApiPermission(@PathVariable Long apiPermissionId,
+                                    @RequestBody @Valid UpdateApiPermissionDTO updateApiPermissionDTO) {
+        apiPermissionAppService.updateApiPermission(getLoginUser(),apiPermissionId,updateApiPermissionDTO);
     }
 
-    @DeleteMapping
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "apiPermissionId",value = "API接口权限Id",required = true)
+    })
+    @DeleteMapping("/{apiPermissionId}")
     @ApiOperation("删除API接口权限")
-    public void deleteApiPermission() {
-
+    public void deleteApiPermission(@PathVariable Long apiPermissionId) {
+        apiPermissionAppService.deleteApiPermission(getLoginUser(),apiPermissionId);
     }
 
 
