@@ -86,6 +86,14 @@ public class PuddingApiPermissionServiceImpl extends ServiceImpl<PuddingApiPermi
                 .eq(PuddingApiPermissionPO::getId,id);
         return update(new PuddingApiPermissionPO(),updateWrapper);
     }
+
+    @Override
+    public Long countApiPermissionByPermApiAndMethode(String permApi, String method) {
+        LambdaQueryWrapper<PuddingApiPermissionPO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PuddingApiPermissionPO::getPermApi,permApi)
+                .eq(PuddingApiPermissionPO::getMethod,method);
+        return count(wrapper);
+    }
 }
 
 

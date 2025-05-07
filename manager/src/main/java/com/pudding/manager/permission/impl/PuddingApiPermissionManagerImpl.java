@@ -70,8 +70,8 @@ public class PuddingApiPermissionManagerImpl implements PuddingApiPermissionMana
         Long countPermCode = puddingApiPermissionService.countApiPermissionByPermCode(addApiPermissionDTO.getPermCode());
         AssertUtils.isFalse(countPermCode > 0L, ResultCodeEnum.PARAMETERS_EXISTS,addApiPermissionDTO.getPermCode());
 
-        Long countPermApi = puddingApiPermissionService.countApiPermissionByPermApi(addApiPermissionDTO.getPermApi());
-        AssertUtils.isFalse(countPermApi > 0L, ResultCodeEnum.PARAMETERS_EXISTS,addApiPermissionDTO.getPermApi());
+        Long countPermApiAndMethode = puddingApiPermissionService.countApiPermissionByPermApiAndMethode(addApiPermissionDTO.getPermApi(),addApiPermissionDTO.getMethod());
+        AssertUtils.isFalse(countPermApiAndMethode > 0L, ResultCodeEnum.PARAMETERS_EXISTS,addApiPermissionDTO.getMethod() + ": " +addApiPermissionDTO.getPermApi());
 
         PuddingApiPermissionPO puddingApiPermissionPO = PuddingApiPermissionConvert.toPO(addApiPermissionDTO);
         puddingApiPermissionPO.setCreateId(loginUser.getUserId());
