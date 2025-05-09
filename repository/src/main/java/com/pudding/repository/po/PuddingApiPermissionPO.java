@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.pudding.repository.base.BaseEntity;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 权限表
  * @TableName pudding_permission
@@ -49,6 +51,12 @@ public class PuddingApiPermissionPO extends BaseEntity {
     @TableLogic
     @TableField(value = "is_deleted")
     private Integer isDeleted;
+
+    /**
+     * 删除时间
+     */
+    @TableField(value = "deleted_time")
+    private Date deletedTime;
 
     /**
      * 创建者id

@@ -1,6 +1,7 @@
 package com.pudding.manager.permission.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pudding.common.enums.ResultCodeEnum;
 import com.pudding.common.security.AdminLoginUser;
@@ -92,20 +93,39 @@ public class PuddingApiPermissionManagerImpl implements PuddingApiPermissionMana
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateApiPermission(AdminLoginUser loginUser,
                                     Long apiPermissionId,
                                     UpdateApiPermissionDTO updateApiPermissionDTO) {
 
-        PuddingApiPermissionPO po = PuddingApiPermissionConvert.toPO(loginUser, updateApiPermissionDTO);
-        Boolean updatedApiPermissionById = puddingApiPermissionService.updateApiPermissionById(apiPermissionId, po);
-        AssertUtils.isTrue(updatedApiPermissionById,ResultCodeEnum.UPDATE_FAILED);
+        PuddingApiPermissionPO apiPermissionPO = puddingApiPermissionService.getById(apiPermissionId);
+        AssertUtils.isNotNull(apiPermissionPO,ResultCodeEnum.PARAM_NOT_EXIST,"id:",apiPermissionId);
+        if (StrUtil.isNotEmpty(updateApiPermissionDTO.getPermCode())) {
+            Long countApiPermissionByPermCode = puddingApiPermissionService.countApiPermissionByPermCode(updateApiPermissionDTO.getPermCode());
+            AssertUtils.isFalse(countApiPermissionByPermCode > 0L, ResultCodeEnum.PARAMETERS_EXISTS,updateApiPermissionDTO.getPermCode());
+        }
+        if (StrUtil.isNotEmpty(updateApiPermissionDTO.getPermApi())) {
+            Long countApiPermissionByPermApiAndMethode = puddingApiPermissionService.countApiPermissionByPermApiAndMethode(updateApiPermissionDTO.getPermApi(), apiPermissionPO.getMethod());
+            AssertUtils.isFalse(countApiPermissionByPermApiAndMethode > 0L, ResultCodeEnum.PARAMETERS_EXISTS,apiPermissionPO.getMethod() + ": " +updateApiPermissionDTO.getPermApi());
+        }
+        if (StrUtil.isNotEmpty(updateApiPermissionDTO.getMethod())) {
+            Long countApiPermissionByPermApiAndMethode = puddingApiPermissionService.countApiPermissionByPermApiAndMethode(apiPermissionPO.getPermApi(), updateApiPermissionDTO.getMethod());
+            AssertUtils.isFalse(countApiPermissionByPermApiAndMethode > 0L, ResultCodeEnum.PARAMETERS_EXISTS,updateApiPermissionDTO.getMethod() + ": " +apiPermissionPO.getPermApi());
+        }
 
+
+        PuddingApiPermissionConvert.toPO(loginUser, updateApiPermissionDTO,apiPermissionPO);
+        Boolean updatedApiPermissionById = puddingApiPermissionService.updateById(apiPermissionPO);
+        AssertUtils.isTrue(updatedApiPermissionById,ResultCodeEnum.UPDATE_FAILED);
+        puddingApiPermissionCache.updateCacheApiPermission(apiPermissionPO);
 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteApiPermission(AdminLoginUser loginUser, Long apiPermissionId) {
         Boolean deleteApiPermissionById = puddingApiPermissionService.deleteApiPermissionById(loginUser.getUserId(),loginUser.getAccount(),apiPermissionId);
         AssertUtils.isTrue(deleteApiPermissionById,ResultCodeEnum.DELETE_FAILED);
+        puddingApiPermissionCache.deleteCacheApiPermission(apiPermissionId);
     }
 }

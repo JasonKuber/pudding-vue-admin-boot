@@ -12,4 +12,8 @@ public interface PuddingApiPermissionCache {
     List<PuddingApiPermissionPO> getCachePermissionByIdList(List<Long> permIdList);
 
     void cacheApiPermission(PuddingApiPermissionPO puddingApiPermissionPO);
+
+    void updateCacheApiPermission(PuddingApiPermissionPO apiPermissionPO);
+
+    void deleteCacheApiPermission(Long apiPermissionId);
 }

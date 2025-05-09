@@ -1,11 +1,11 @@
 package com.pudding.manager.convert;
 
+import cn.hutool.core.util.StrUtil;
 import com.pudding.common.security.AdminLoginUser;
 import com.pudding.domain.model.dto.api.AddApiPermissionDTO;
 import com.pudding.domain.model.dto.api.PageApiPermissionListDTO;
 import com.pudding.domain.model.dto.api.UpdateApiPermissionDTO;
 import com.pudding.domain.model.entity.PuddingApiPermissionEntity;
-import com.pudding.domain.model.vo.api.PageApiPermissionListVO;
 import com.pudding.repository.po.PuddingApiPermissionPO;
 
 import java.util.ArrayList;
@@ -64,8 +64,22 @@ public class PuddingApiPermissionConvert {
         return po;
     }
 
-
-    public static List<PageApiPermissionListVO> toVOList(List<PuddingApiPermissionEntity> entityList) {
-        return null;
+    public static void toPO(AdminLoginUser loginUser, UpdateApiPermissionDTO updateApiPermissionDTO,PuddingApiPermissionPO po) {
+        if (StrUtil.isNotEmpty(updateApiPermissionDTO.getPermName())) {
+            po.setPermName(updateApiPermissionDTO.getPermName());
+        }
+        if (StrUtil.isNotEmpty(updateApiPermissionDTO.getPermCode())) {
+            po.setPermCode(updateApiPermissionDTO.getPermCode());
+        }
+        if (StrUtil.isNotEmpty(updateApiPermissionDTO.getPermApi())) {
+            po.setPermApi(updateApiPermissionDTO.getPermApi());
+        }
+        if (StrUtil.isNotEmpty(updateApiPermissionDTO.getMethod())) {
+            po.setMethod(updateApiPermissionDTO.getMethod());
+        }
+        po.setUpdateId(loginUser.getUserId());
+        po.setUpdateAccount(loginUser.getAccount());
     }
+
+
 }

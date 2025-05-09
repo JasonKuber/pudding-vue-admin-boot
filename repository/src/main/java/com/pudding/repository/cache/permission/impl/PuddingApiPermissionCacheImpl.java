@@ -41,4 +41,15 @@ public class PuddingApiPermissionCacheImpl implements PuddingApiPermissionCache 
     public void cacheApiPermission(PuddingApiPermissionPO puddingApiPermissionPO) {
         hashOperations.hPutIfAbsent(ALL_PERMISSION,puddingApiPermissionPO.getId().toString(),puddingApiPermissionPO);
     }
+
+    @Override
+    public void updateCacheApiPermission(PuddingApiPermissionPO apiPermissionPO) {
+        String entryKey = apiPermissionPO.getId().toString();
+        hashOperations.hPut(ALL_PERMISSION,entryKey,apiPermissionPO);
+    }
+
+    @Override
+    public void deleteCacheApiPermission(Long apiPermissionId) {
+        hashOperations.hDelete(ALL_PERMISSION,apiPermissionId.toString());
+    }
 }

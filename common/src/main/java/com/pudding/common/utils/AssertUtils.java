@@ -182,6 +182,19 @@ public class AssertUtils {
     }
 
     /**
+     * 如果对象是空，则抛异常
+     *
+     * @param object
+     * @param resultCode
+     * @param args 国际化参数
+     */
+    public static void isNotNull(Object object, ResultCodeEnum resultCode,Object...args) {
+        if (ObjectUtil.isNull(object)) {
+            throw new BusinessException(resultCode,args);
+        }
+    }
+
+    /**
      * 判断对象数组是否为空
      * @param object 对象数组
      * @param resultCode 返回结果

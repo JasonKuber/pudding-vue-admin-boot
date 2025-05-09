@@ -10,6 +10,7 @@ import com.pudding.repository.po.PuddingApiPermissionPO;
 import com.pudding.repository.service.PuddingApiPermissionService;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -81,6 +82,7 @@ public class PuddingApiPermissionServiceImpl extends ServiceImpl<PuddingApiPermi
     public Boolean deleteApiPermissionById(Long userId, String account, Long id) {
         LambdaUpdateWrapper<PuddingApiPermissionPO> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.set(PuddingApiPermissionPO::getIsDeleted,1)
+                .set(PuddingApiPermissionPO::getDeletedTime,new Date())
                 .set(PuddingApiPermissionPO::getUpdateId,userId)
                 .set(PuddingApiPermissionPO::getUpdateAccount,account)
                 .eq(PuddingApiPermissionPO::getId,id);
@@ -91,7 +93,8 @@ public class PuddingApiPermissionServiceImpl extends ServiceImpl<PuddingApiPermi
     public Long countApiPermissionByPermApiAndMethode(String permApi, String method) {
         LambdaQueryWrapper<PuddingApiPermissionPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(PuddingApiPermissionPO::getPermApi,permApi)
-                .eq(PuddingApiPermissionPO::getMethod,method);
+                .eq(PuddingApiPermissionPO::getMethod,method)
+                .isNull(PuddingApiPermissionPO::getDeletedTime);
         return count(wrapper);
     }
 }

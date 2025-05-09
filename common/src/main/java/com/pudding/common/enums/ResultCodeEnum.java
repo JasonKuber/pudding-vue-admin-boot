@@ -28,6 +28,7 @@ public enum ResultCodeEnum implements BaseErrorInfoInterface {
     PARAMETERS_EXISTS("400","response.PARAMETERS_EXISTS"),
     UPDATE_FAILED("400","response.UPDATE_FAILED"),
     DELETE_FAILED("400","response.DELETE_FAILED"),
+    PARAM_NOT_EXIST("400","response.PARAM_NOT_EXIST"),
 
 
 
